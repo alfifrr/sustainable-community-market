@@ -1,8 +1,9 @@
 from app import create_app
-from app.apis.user_api import api
+from app.apis import blueprints
 
 app = create_app()
-app.register_blueprint(api, url_prefix='/api')
+for blueprint, url_prefix in blueprints:
+    app.register_blueprint(blueprint, url_prefix=url_prefix)
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -2,13 +2,16 @@ from flask import Blueprint, request, jsonify
 from app.models import Category
 from app import db
 from flask_jwt_extended import jwt_required
+from app.utils.decorators import verified_only
 
 api = Blueprint('api', __name__)
 
 
 @api.route('/sell', methods=['POST'])
-@jwt_required
+@jwt_required()
+@verified_only
 def sell():
+    # TODO: Incomplete /sell, need validation
     if request.method == 'POST':
         data = request.get_json()
 

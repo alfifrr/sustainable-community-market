@@ -1,22 +1,22 @@
 from flask import Blueprint, request, jsonify
 from app.models import User
 from app import db
+from app.utils.validators import SignupForm
 
-api = Blueprint('api', __name__)
+user = Blueprint('user', __name__)
 
 
-@api.route('/users', methods=['GET', 'POST'])
+@user.route('/users', methods=['GET', 'POST'])
 def users():
     if request.method == 'POST':
         data = request.get_json()
+        form = SignupForm(data=data)
 
-        required_fields = ['username', 'password', 'first_name',
-                           'last_name', 'email', 'phone_number']
-        for field in required_fields:
-            if field not in data:
-                return jsonify({
-                    'error': 'Validation error',
-                    'message': f'Missing required field: {field}'}), 400
+        if not form.validate():
+            return jsonify({
+                'error': 'Validation error',
+                'message': form.errors
+            }), 400
 
         if User.query.filter_by(username=data['username']).first():
             return jsonify({
@@ -30,8 +30,6 @@ def users():
             return jsonify({
                 'error': 'Validation error',
                 'message': 'Phone number already exists'}), 400
-
-        # TODO: username minimum char, password strength, email validity, first/last name checker, phone number char, address minimum char
 
         try:
             new_user = User(
@@ -47,20 +45,29 @@ def users():
             db.session.add(new_user)
             db.session.commit()
 
+            # send_user_activation_email(new_user)
+
             return jsonify({
+                "status": "success",
                 "message": "User created successfully",
-                "user": new_user.to_credentials()}), 201
+                "data": new_user.to_credentials()
+            }), 201
 
         except Exception as e:
             db.session.rollback()
             return jsonify({
                 'error': 'Server error',
-                'message': f'Failed to create user: {str(e)}'}), 500
+                'message': str(e)}), 500
     # GET
     try:
         users = User.query.all()
-        return jsonify([user.to_dict() for user in users]), 200
+        return jsonify({
+            "status": "success",
+            "message": "Users retrieved successfully",
+            "data": [user.to_dict() for user in users]
+        }), 200
     except Exception as e:
         return jsonify({
-            'error': 'Exception on GET /users',
-            'message': f'Failed to retrieve users: {str(e)}'}), 500
+            "error": "Server error",
+            "message": str(e)
+        }), 500

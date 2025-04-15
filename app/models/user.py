@@ -19,17 +19,21 @@ class User(db.Model):
         db.String(255), unique=True, nullable=False)
     phone_number: Mapped[str] = mapped_column(
         db.String(20), unique=True, nullable=False)
-    # address: Mapped[str] = mapped_column(db.String(255), nullable=False)
 
     date_joined: Mapped[datetime] = mapped_column(db.DateTime(
         timezone=True), default=lambda: datetime.now(timezone.utc))
-    date_updated: Mapped[datetime] = mapped_column(db.DateTime(timezone=True), default=lambda: datetime.now(
-        timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    date_updated: Mapped[datetime] = mapped_column(db.DateTime(
+        timezone=True), nullable=True, onupdate=lambda: datetime.now(timezone.utc))
     last_activity: Mapped[datetime] = mapped_column(
         db.DateTime(timezone=True), nullable=True)
     is_verified: Mapped[bool] = mapped_column(db.Boolean, default=False)
 
-    activation_token: Mapped[str] = mapped_column(db.String(255), unique=True)
+    activation_token: Mapped[str] = mapped_column(
+        db.String(255), unique=True, nullable=True)
+
+    # rel
+    addresses = db.relationship(
+        'Address', back_populates='user', lazy='dynamic')
 
     def generate_activation_token(self):
         self.activation_token = token_urlsafe(32)
@@ -61,7 +65,7 @@ class User(db.Model):
                 "phone_number": self.phone_number
             },
             "date_joined": self.date_joined.isoformat(),
-            "date_updated": self.date_updated.isoformat(),
+            "date_updated": self.date_updated.isoformat() if self.date_updated else None,
             "last_activity": self.last_activity.isoformat() if self.last_activity else None,
             "is_verified": self.is_verified,
         }
@@ -71,6 +75,7 @@ class User(db.Model):
             "id": self.id,
             "name": f"{self.first_name} {self.last_name}",
             "date_joined": self.date_joined.isoformat(),
+            "date_updated": self.date_updated.isoformat() if self.date_updated else None,
             "last_activity": self.last_activity.isoformat() if self.last_activity else None,
             "is_verified": self.is_verified,
         }
