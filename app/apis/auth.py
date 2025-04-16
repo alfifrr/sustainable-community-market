@@ -3,7 +3,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token, jwt_re
 from datetime import timedelta
 from app import db
 from app.models import User
-from app.utils.decorators import require_json
+from app.utils.decorators import handle_request
 from app.utils.helpers import send_user_activation_email, validate_credentials
 
 
@@ -11,7 +11,7 @@ auth = Blueprint("auth", __name__)
 
 
 @auth.route("/login", methods=["POST"])
-@require_json
+@handle_request('POST')
 def login():
     user, error_response, status_code = validate_credentials()
     if error_response:
@@ -37,6 +37,7 @@ def login():
         }), 200
     except Exception as e:
         return jsonify({
+            'status': 'error',
             "error": "Server error",
             "message": str(e)
         }), 500
@@ -49,6 +50,7 @@ def refresh():
 
     if jwt_claims['type'] != 'refresh':
         return jsonify({
+            'status': 'error',
             "error": "Authentication error",
             "message": "Invalid token type"
         }), 401
@@ -72,7 +74,7 @@ def refresh():
 
 
 @auth.route('/send-activation', methods=['POST'])
-@require_json
+@handle_request('POST')
 def send_activation():
     user, error_response, status_code = validate_credentials()
     if error_response:
@@ -80,6 +82,7 @@ def send_activation():
 
     if user.is_verified:
         return jsonify({
+            'status': 'error',
             "error": "Validation error",
             "message": "Account already activated"
         }), 401
@@ -96,6 +99,7 @@ def activate_account(token):
     user = User.query.filter_by(activation_token=token).first()
     if not user:
         return jsonify({
+            'status': 'error',
             "error": "Validation error",
             "message": "Invalid activation token"
         }), 400
@@ -110,6 +114,7 @@ def activate_account(token):
     except Exception as e:
         db.session.rollback()
         return jsonify({
+            'status': 'error',
             "error": "Server error",
             "message": str(e)
         }), 500

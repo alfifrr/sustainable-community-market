@@ -1,4 +1,4 @@
-from flask_wtf import FlaskForm
+from app.utils.validators.base import BaseForm
 from wtforms import StringField, PasswordField
 from wtforms.validators import (
     Email, Length,
@@ -7,7 +7,7 @@ from wtforms.validators import (
 )
 
 
-class SignupForm(FlaskForm):
+class SignupForm(BaseForm):
     username = StringField('username', validators=[
         InputRequired(message="Username is required"),
         Length(min=6, message="Username must be at least 6 characters long"),

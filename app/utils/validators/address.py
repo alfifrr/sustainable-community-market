@@ -1,9 +1,9 @@
-from flask_wtf import FlaskForm
+from app.utils.validators.base import BaseForm
 from wtforms import StringField
 from wtforms.validators import DataRequired, Length
 
 
-class AddressForm(FlaskForm):
+class AddressForm(BaseForm):
     label = StringField('label', validators=[
         DataRequired(message='Label is required'),
         Length(min=3, max=50, message='Label must be between 3 and 50 characters')

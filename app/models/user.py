@@ -34,6 +34,8 @@ class User(db.Model):
     # rel
     addresses = db.relationship(
         'Address', back_populates='user', lazy='dynamic')
+    products = db.relationship(
+        'Product', back_populates='user', lazy='dynamic')
 
     def generate_activation_token(self):
         self.activation_token = token_urlsafe(32)

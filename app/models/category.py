@@ -9,3 +9,7 @@ class Category(db.Model):
     name: Mapped[str] = mapped_column(
         db.String(255), unique=True, nullable=False)
     description: Mapped[str] = mapped_column(db.String(255), nullable=False)
+
+    # rel
+    products = db.relationship(
+        'Product', back_populates='category', lazy='dynamic')
