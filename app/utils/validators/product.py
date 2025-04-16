@@ -20,11 +20,11 @@ class ProductForm(BaseForm):
     ])
     price = IntegerField('Price', validators=[
         DataRequired(message='Product price is required'),
-        NumberRange(min=0, message='Price cannot be negative')
+        NumberRange(min=1, message='Price cannot below zero')
     ])
     stock = IntegerField('Stock', validators=[
         DataRequired(message='Product stock is required'),
-        NumberRange(min=0, message='Stock cannot be negative')
+        NumberRange(min=1, message='Stock cannot below zero')
     ])
     category_id = IntegerField('Category', validators=[
         DataRequired(message='Category ID is required')

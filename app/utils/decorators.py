@@ -3,13 +3,14 @@ from flask_jwt_extended import get_jwt_identity
 from app.models import User
 from flask import jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
+from werkzeug.exceptions import BadRequest
 
 
 def verified_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         current_user_id = get_jwt_identity()
-        user = User.query.get(int(current_user_id))
+        user = User.query.get(current_user_id)
         if not user:
             return jsonify({
                 'status': 'error',
@@ -29,12 +30,21 @@ def handle_request(*methods):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            if request.method in methods and not request.is_json:
-                return jsonify({
-                    'status': 'error',
-                    'error': 'JSON error',
-                    'message': f'{request.method} request must include JSON data'
-                }), 400
+            if request.method in methods:
+                if not request.is_json:
+                    return jsonify({
+                        'status': 'error',
+                        'error': 'JSON error',
+                        'message': f'{request.method} request must include JSON data'
+                    }), 400
+                try:
+                    request.get_json()
+                except BadRequest:
+                    return jsonify({
+                        'status': 'error',
+                        'error': 'JSON decode error',
+                        'message': 'Failed to decode JSON object'
+                    }), 400
 
             if request.method == 'GET':
                 try:

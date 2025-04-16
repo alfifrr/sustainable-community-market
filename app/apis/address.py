@@ -53,6 +53,12 @@ def manage_addresses():
             }), 500
     # GET
     addresses = Address.query.filter_by(user_id=current_user_id).all()
+    if not addresses:
+        return jsonify({
+            'status': 'success',
+            'message': 'No addresses found',
+            'data': []
+        }), 200
     return jsonify({
         'status': 'success',
         'message': 'Addresses retrieved successfully',

@@ -53,9 +53,14 @@ def manage_products():
 @handle_request()
 def get_products():
     products = Product.query.all()
+    if not products:
+        return jsonify({
+            'status': 'success',
+            'message': 'No products found',
+            'data': []
+        }), 200
     return jsonify({
         'status': 'success',
-        'data': {
-            'products': [product.to_dict() for product in products]
-        }
+        'message': 'Products retrieved successfully',
+        'data': [product.to_dict() for product in products]
     }), 200
