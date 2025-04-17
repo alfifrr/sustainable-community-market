@@ -11,3 +11,13 @@ class DepositForm(BaseForm):
             NumberRange(min=0, message='Deposit amount cannot be negative')
         ]
     )
+
+
+class WithdrawalForm(BaseForm):
+    amount = IntegerField(
+        'Amount',
+        validators=[
+            DataRequired(message='Withdrawal amount is required'),
+            NumberRange(min=0, message='Withdrawal amount cannot be negative')
+        ]
+    )

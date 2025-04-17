@@ -36,6 +36,16 @@ class User(db.Model):
         'Address', back_populates='user', lazy='dynamic')
     products = db.relationship(
         'Product', back_populates='user', lazy='dynamic')
+    transaction_history = db.relationship(
+        'TransactionHistory', back_populates='user', lazy='dynamic')
+    sales = db.relationship(
+        'ItemTransaction',
+        foreign_keys='ItemTransaction.seller_id'
+    )
+    purchases = db.relationship(
+        'ItemTransaction',
+        foreign_keys='ItemTransaction.buyer_id'
+    )
 
     def generate_activation_token(self):
         self.activation_token = token_urlsafe(32)
