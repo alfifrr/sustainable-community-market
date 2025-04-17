@@ -4,6 +4,7 @@ from app.utils.decorators import handle_request
 from app.utils.validators import BuyProductForm
 from app.models import Address, ItemTransaction, Product, User
 from app import db
+from decimal import Decimal
 
 buy = Blueprint("buy", __name__)
 
@@ -24,10 +25,11 @@ def buy_product():
             delivery_address = Address.query.get(data["address_id"])
             product = Product.query.get(data["product_id"])
             pickup_address = Address.query.get(product.pickup_address_id)
-            today_price = product.get_discounted_price()
+
+            today_price = Decimal(product.get_discounted_price())
             quantity = data["quantity"]
             total_price = today_price * quantity
-            delivery_fee = 15000
+            delivery_fee = Decimal('15000')
             grand_total = total_price + delivery_fee
             if user.balance < grand_total:
                 return jsonify({

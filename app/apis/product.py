@@ -49,7 +49,8 @@ def manage_products():
             db.session.rollback()
             return (
                 jsonify(
-                    {"status": "error", "error": "Server error", "message": str(e)}
+                    {"status": "error", "error": "Server error",
+                        "message": str(e)}
                 ),
                 500,
             )
@@ -61,7 +62,8 @@ def get_products():
     products = Product.query.all()
     if not products:
         return (
-            jsonify({"status": "success", "message": "No products found", "data": []}),
+            jsonify(
+                {"status": "success", "message": "No products found", "data": []}),
             200,
         )
     return (

@@ -42,11 +42,17 @@ class Product(db.Model):
         'Address', back_populates='products', lazy=True)
 
     def get_discounted_price(self) -> float:
-        now = datetime.now(timezone.utc)
-        exp = self.expiration_date.replace(tzinfo=timezone.utc)
-        days_remaining = (self.expiration_date - now).days
-        discount_map = {4: 0.8, 3: 0.6, 2: 0.4, 1: 0.2, 0: 0.1}
-        return float(self.price * discount_map[days_remaining])
+        try:
+            now = datetime.now(timezone.utc)
+            exp_date = self.expiration_date if self.expiration_date.tzinfo else self.expiration_date.replace(
+                tzinfo=timezone.utc)
+            days_remaining = (exp_date - now).days
+            if days_remaining < 0:
+                return 0
+            discount_map = {4: 0.8, 3: 0.6, 2: 0.4, 1: 0.2, 0: 0.1}
+            return float(self.price * discount_map[days_remaining])
+        except Exception as e:
+            return float(self.price)
 
     def __repr__(self):
         return f"<Product {self.name} from user {self.user_id}"
