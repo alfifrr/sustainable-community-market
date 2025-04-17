@@ -36,10 +36,14 @@ class Product(db.Model):
 
     # rel
     user = db.relationship("User", back_populates="products", lazy=True)
-    category = db.relationship("Category", back_populates="products", lazy=True)
+    category = db.relationship(
+        "Category", back_populates="products", lazy=True)
+    pickup_address = db.relationship(
+        'Address', back_populates='products', lazy=True)
 
     def get_discounted_price(self) -> float:
         now = datetime.now(timezone.utc)
+        exp = self.expiration_date.replace(tzinfo=timezone.utc)
         days_remaining = (self.expiration_date - now).days
         discount_map = {4: 0.8, 3: 0.6, 2: 0.4, 1: 0.2, 0: 0.1}
         return float(self.price * discount_map[days_remaining])
@@ -54,14 +58,20 @@ class Product(db.Model):
             "description": self.description,
             "price": self.price,
             "stock": self.stock,
-            "pickup_address": self.pickup_address,
+            "pickup_address": {
+                "id": self.pickup_address_id,
+                "label": self.pickup_address.label,
+                'address': self.pickup_address.address,
+                'contact_person': self.pickup_address.contact_person,
+                'details': self.pickup_address.details
+            },
             "expiration_date": self.expiration_date.isoformat(),
             "product_posted": self.product_posted.isoformat(),
             "product_updated": (
                 self.product_updated.isoformat() if self.product_updated else None
             ),
             "category": {"id": self.category.id, "name": self.category.name},
-            "user_id": {
+            "user": {
                 "id": self.user.id,
                 "name": f"{self.user.first_name} {self.user.last_name}",
                 "is_verified": self.user.is_verified,

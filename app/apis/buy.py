@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.utils.decorators import handle_request
 from app.utils.validators import BuyProductForm
-from app.models import Address, ItemTransaction, Product
+from app.models import Address, ItemTransaction, Product, User
 from app import db
 
 buy = Blueprint("buy", __name__)
@@ -12,6 +12,7 @@ buy = Blueprint("buy", __name__)
 @jwt_required()
 @handle_request("POST")
 def buy_product():
+    current_user_id = get_jwt_identity()
     if request.method == "POST":
         data = request.get_json()
         form = BuyProductForm(data=data)
@@ -19,12 +20,21 @@ def buy_product():
             return jsonify(form.get_validation_error()), 400
 
         try:
+            user = User.query.get(current_user_id)
             delivery_address = Address.query.get(data["address_id"])
             product = Product.query.get(data["product_id"])
             pickup_address = Address.query.get(product.pickup_address_id)
             today_price = product.get_discounted_price()
             quantity = data["quantity"]
             total_price = today_price * quantity
+            delivery_fee = 15000
+            grand_total = total_price + delivery_fee
+            if user.balance < grand_total:
+                return jsonify({
+                    'status': 'error',
+                    'error': 'Insufficient funds',
+                    'message': f'Available balance {user.balance} is less than price {grand_total}'
+                }), 422
 
             item_transaction = ItemTransaction(
                 quantity=quantity,
@@ -35,9 +45,11 @@ def buy_product():
                 delivery_address_details=delivery_address.to_dict(),
                 product_id=product.id,
                 seller_id=product.user_id,
-                buyer_id=get_jwt_identity(),
+                buyer_id=user.id,
             )
             product.stock -= quantity
+            user.balance -= grand_total
+
             db.session.add(item_transaction)
             db.session.commit()
             return jsonify(item_transaction.to_dict()), 201
@@ -45,7 +57,8 @@ def buy_product():
             db.session.rollback()
             return (
                 jsonify(
-                    {"status": "error", "error": "Server error", "message": str(e)}
+                    {"status": "error", "error": "Server error",
+                        "message": str(e)}
                 ),
                 500,
             )
