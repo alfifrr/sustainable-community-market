@@ -6,6 +6,7 @@ from os import environ
 from flask_mail import Mail
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
+from sqlalchemy_utils import database_exists, create_database
 
 
 class Base(DeclarativeBase):
@@ -22,7 +23,12 @@ migrate = Migrate()
 def create_app(config=None):
     app = Flask(__name__)
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.sqlite'
+    url = environ.get("POSTGRESQL_URL")
+    if not database_exists(url):
+        create_database(url)
+
+    app.config["SQLALCHEMY_DATABASE_URI"] = url
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config['JWT_SECRET_KEY'] = environ.get('SECRET_KEY')
     app.config['SECRET_KEY'] = environ.get('SECRET_KEY')
     app.config['WTF_CSRF_ENABLED'] = False
