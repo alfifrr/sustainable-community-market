@@ -1,5 +1,6 @@
 .venv
 database.sqlite
+database.sqlite-journal
 *.pyc
 __pycache__/
 .env
