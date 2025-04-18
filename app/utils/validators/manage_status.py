@@ -2,7 +2,7 @@ from app.utils.validators.base import BaseForm
 from wtforms import IntegerField
 from wtforms.validators import DataRequired, NumberRange, ValidationError
 from flask_jwt_extended import get_jwt_identity
-from app.models import Address, ItemTransaction, StatusType
+from app.models import ItemTransaction, StatusType
 
 
 class ProcessForm(BaseForm):

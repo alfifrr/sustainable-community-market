@@ -35,7 +35,8 @@ class ProductForm(BaseForm):
     expiration_date = DateTimeField(
         'Expiration Date',
         validators=[
-            DataRequired(message='Expiration date is required')
+            DataRequired(
+                message='Expiration date is required (example: 2000-11-22T23:59:59Z)')
         ],
         format='%Y-%m-%dT%H:%M:%SZ')  # ISO 8601 format
 

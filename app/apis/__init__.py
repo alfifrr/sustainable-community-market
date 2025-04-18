@@ -9,6 +9,8 @@ from .confirm_delivery import confirm_delivery
 from .history import history
 from .category import category
 from .manage_address import manage_address
+from .cancel import cancel
+from .manage_product import manage_product
 
 blueprints = [
     (user, '/api'),
@@ -21,5 +23,7 @@ blueprints = [
     (confirm_delivery, '/api'),
     (history, '/api'),
     (category, '/api'),
-    (manage_address, '/api')
+    (manage_address, '/api'),
+    (cancel, '/api'),
+    (manage_product, '/api')
 ]

@@ -34,13 +34,14 @@ class ItemTransaction(db.Model):
     delivery_status: Mapped[StatusType] = mapped_column(
         db.Enum(StatusType), nullable=False, default=StatusType.PENDING
     )
+    product_details = db.Column(db.JSON, nullable=False)
     rating: Mapped[int] = mapped_column(
         db.Integer, nullable=True, comment="Rating from buyer to seller (1-5)"
     )
 
     # FK
     product_id: Mapped[int] = mapped_column(
-        db.Integer, db.ForeignKey("products.id"), nullable=False
+        db.Integer, db.ForeignKey("products.id", ondelete='SET NULL'), nullable=True
     )
     pickup_address_id: Mapped[int] = mapped_column(
         db.Integer, db.ForeignKey("addresses.id"), nullable=False
@@ -56,7 +57,8 @@ class ItemTransaction(db.Model):
     )
 
     # rel
-    product = db.relationship("Product", backref="transactions")
+    product = db.relationship(
+        "Product", backref="transactions", passive_deletes=True)
     seller = db.relationship(
         "User",
         foreign_keys=[seller_id],
@@ -77,13 +79,14 @@ class ItemTransaction(db.Model):
             "total_price": float(self.total_price) if self.total_price else 0.0,
             "pickup_address_details": self.pickup_address_details or {},
             "delivery_address_details": self.delivery_address_details or {},
+            "product_details": self.product_details or {},
             "delivery_status": (
                 self.delivery_status.value
                 if self.delivery_status
                 else StatusType.PENDING.value
             ),
             "rating": self.rating,
-            "product": {"id": self.product.id, "name": self.product.name},
+            "product": {"id": self.product.id, "name": self.product.name} if self.product else None,
             "seller": (
                 {
                     "id": self.seller.id,
