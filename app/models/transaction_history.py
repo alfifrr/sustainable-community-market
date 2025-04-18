@@ -20,7 +20,7 @@ class TransactionHistory(db.Model):
         timezone=True), default=lambda: datetime.now(timezone.utc))
     type: Mapped[TransactionType] = mapped_column(
         db.Enum(TransactionType), nullable=False)
-    description: Mapped[str] = mapped_column(db.String(255), nullable=True)
+    details = db.Column(db.JSON, nullable=True)
 
     # FK
     user_id: Mapped[int] = mapped_column(
@@ -35,5 +35,5 @@ class TransactionHistory(db.Model):
             'amount': float(self.amount),
             'date': self.date.isoformat(),
             'type': self.type.value,
-            'description': self.description
+            'details': self.details or {}
         }

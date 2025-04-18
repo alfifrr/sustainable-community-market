@@ -25,7 +25,10 @@ class ItemTransaction(db.Model):
         onupdate=lambda: datetime.now(timezone.utc),
     )
     quantity: Mapped[int] = mapped_column(db.Integer, nullable=False)
-    total_price: Mapped[float] = mapped_column(db.Numeric(10, 2), nullable=False)
+    original_price: Mapped[float] = mapped_column(
+        db.Numeric(10, 2), nullable=False)
+    total_price: Mapped[float] = mapped_column(
+        db.Numeric(10, 2), nullable=False)
     pickup_address_details = db.Column(db.JSON, nullable=False)
     delivery_address_details = db.Column(db.JSON, nullable=False)
     delivery_status: Mapped[StatusType] = mapped_column(

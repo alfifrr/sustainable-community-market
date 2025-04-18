@@ -27,7 +27,10 @@ def manage_balance():
                 user_id=user.id,
                 amount=amount,
                 type=TransactionType.DEPOSIT,
-                description=f'Deposit of {amount}'
+                details={
+                    'description': f'Deposit of {amount}',
+                    'timestamp': datetime.now(timezone.utc).isoformat()
+                }
             )
             user.balance += amount
             user.last_activity = datetime.now(timezone.utc)
@@ -75,7 +78,10 @@ def withdraw_balance():
                 user_id=user.id,
                 amount=amount,
                 type=TransactionType.WITHDRAW,
-                description=f'Withdraw of {amount}'
+                details={
+                    'description': f'Withdrawal of {amount}',
+                    'timestamp': datetime.now(timezone.utc).isoformat()
+                }
             )
             user.balance -= amount
             user.last_activity = datetime.now(timezone.utc)

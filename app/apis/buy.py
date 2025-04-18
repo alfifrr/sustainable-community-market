@@ -28,6 +28,7 @@ def buy_product():
 
             today_price = Decimal(product.get_discounted_price())
             quantity = data["quantity"]
+            original_total_price = product.price * quantity
             total_price = today_price * quantity
             delivery_fee = Decimal('15000')
             grand_total = total_price + delivery_fee
@@ -35,7 +36,7 @@ def buy_product():
                 return jsonify({
                     'status': 'error',
                     'error': 'Insufficient funds',
-                    'message': f'Available balance {user.balance} is less than price {grand_total}'
+                    'message': f'Available balance {user.balance} is less than price {grand_total} incl. shipping (15000)'
                 }), 422
 
             item_transaction = ItemTransaction(
@@ -48,6 +49,7 @@ def buy_product():
                 product_id=product.id,
                 seller_id=product.user_id,
                 buyer_id=user.id,
+                original_price=original_total_price
             )
             product.stock -= quantity
             user.balance -= grand_total

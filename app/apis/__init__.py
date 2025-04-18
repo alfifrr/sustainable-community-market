@@ -4,6 +4,8 @@ from .address import address
 from .product import product
 from .balance import balance
 from .buy import buy
+from .manage_status import manage_status
+from .confirm_delivery import confirm_delivery
 
 blueprints = [
     (user, '/api'),
@@ -11,5 +13,7 @@ blueprints = [
     (address, '/api'),
     (product, '/api'),
     (balance, '/api'),
-    (buy, '/api')
+    (buy, '/api'),
+    (manage_status, '/api'),
+    (confirm_delivery, '/api')
 ]

@@ -21,9 +21,12 @@ class BuyProductForm(BaseForm):
     )
 
     def validate_product_id(self, field):
+        current_user_id = get_jwt_identity()
         product = Product.query.get(field.data)
         if not product:
             raise ValidationError("Product does not exist")
+        if product.user_id == int(current_user_id):
+            raise ValidationError('Cannot buy own product')
         self._product = product
 
     def validate_quantity(self, field):
