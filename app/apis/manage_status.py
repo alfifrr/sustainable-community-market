@@ -1,10 +1,11 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.utils.decorators import handle_request
-from app.utils.validators import ProcessForm, CancelForm, ConfirmDeliveryForm, RatingForm
+from app.utils.validators import ProcessForm, CancelForm, RatingForm
 from app.models import ItemTransaction, StatusType, User, Product
 from app import db
 from decimal import Decimal
+from datetime import datetime, timezone
 
 manage_status = Blueprint('manage_status', __name__)
 
@@ -20,6 +21,9 @@ def process_product():
     try:
         item_transaction = ItemTransaction.query.get(data['transaction_id'])
         item_transaction.delivery_status = StatusType.PROCESSED
+        user = User.query.get(get_jwt_identity())
+        user.last_activity = datetime.now(timezone.utc)
+
         db.session.commit()
         return jsonify(item_transaction.to_dict()), 201
     except Exception as e:
@@ -47,6 +51,7 @@ def cancel_product():
         delivery_fee = Decimal('15000')
         total_refund = item_transaction.total_price + delivery_fee
         user.balance += total_refund
+        user.last_activity = datetime.now(timezone.utc)
         # return stock
         product = Product.query.get(item_transaction.product_id)
         product.stock += int(item_transaction.quantity)
@@ -74,6 +79,9 @@ def rate_product():
         item_transaction = ItemTransaction.query.get(data['transaction_id'])
         item_transaction.delivery_status = StatusType.RATED
         item_transaction.rating = data['rating']
+        user = User.query.get(get_jwt_identity())
+        user.last_activity = datetime.now(timezone.utc)
+
         db.session.commit()
         return jsonify(item_transaction.to_dict()), 201
     except Exception as e:

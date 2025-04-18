@@ -13,3 +13,10 @@ class Category(db.Model):
     # rel
     products = db.relationship(
         'Product', back_populates='category', lazy='dynamic')
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description
+        }

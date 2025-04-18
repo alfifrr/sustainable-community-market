@@ -23,7 +23,8 @@ class Address(db.Model):
 
     # Rel
     user = db.relationship('User', back_populates='addresses')
-    products = db.relationship('Product', back_populates='pickup_address')
+    products = db.relationship(
+        'Product', back_populates='pickup_address', lazy='dynamic')
 
     def __repr__(self):
         return f'<Address {self.label} for user {self.user_id}'

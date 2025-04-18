@@ -8,13 +8,15 @@ class User(db.Model):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
-    username: Mapped[str] = mapped_column(db.String(20), unique=True, nullable=False)
+    username: Mapped[str] = mapped_column(
+        db.String(20), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(db.String(255), nullable=False)
     balance: Mapped[float] = mapped_column(db.Numeric(10, 2), default=0.00)
 
     first_name: Mapped[str] = mapped_column(db.String(50), nullable=False)
     last_name: Mapped[str] = mapped_column(db.String(50), nullable=False)
-    email: Mapped[str] = mapped_column(db.String(255), unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(
+        db.String(255), unique=True, nullable=False)
     phone_number: Mapped[str] = mapped_column(
         db.String(20), unique=True, nullable=False
     )
@@ -37,8 +39,10 @@ class User(db.Model):
     )
 
     # rel
-    addresses = db.relationship("Address", back_populates="user", lazy="dynamic")
-    products = db.relationship("Product", back_populates="user", lazy="dynamic")
+    addresses = db.relationship(
+        "Address", back_populates="user", lazy="dynamic")
+    products = db.relationship(
+        "Product", back_populates="user", lazy="dynamic")
     transaction_history = db.relationship(
         "TransactionHistory", back_populates="user", lazy="dynamic"
     )
@@ -56,7 +60,8 @@ class User(db.Model):
         self.activation_token = None
 
     def set_password(self, password):
-        self.password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
+        self.password_hash = bcrypt.generate_password_hash(
+            password).decode("utf-8")
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
@@ -98,4 +103,3 @@ class User(db.Model):
             ),
             "is_verified": self.is_verified,
         }
-        # TODO: will insert rating total from transactions related later

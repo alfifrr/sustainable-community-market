@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.utils.decorators import verified_only, handle_request
+from app.utils.decorators import handle_request
 from app.utils.validators import AddressForm
 from app.models import Address, User
 from app import db

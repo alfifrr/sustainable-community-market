@@ -5,6 +5,7 @@ from app.utils.validators import DepositForm, WithdrawalForm
 from app.models import User, TransactionHistory, TransactionType
 from app import db
 from datetime import datetime, timezone
+from decimal import Decimal
 
 balance = Blueprint('balance', __name__)
 
@@ -19,10 +20,9 @@ def manage_balance():
         form = DepositForm(data=data)
         if not form.validate():
             return jsonify(form.get_validation_error()), 400
-
         try:
             user = User.query.get(get_jwt_identity())
-            amount = data['amount']
+            amount = Decimal(str(data['amount']))
             transaction_history = TransactionHistory(
                 user_id=user.id,
                 amount=amount,
@@ -67,7 +67,7 @@ def withdraw_balance():
 
         try:
             user = User.query.get(get_jwt_identity())
-            amount = data['amount']
+            amount = Decimal(str(data['amount']))
             if user.balance < amount:
                 return jsonify({
                     'status': 'error',

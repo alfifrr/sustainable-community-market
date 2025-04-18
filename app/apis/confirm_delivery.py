@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
 from app import db
-from app.utils.decorators import handle_request
+from app.utils.decorators import handle_request, get_jwt_identity
 from app.utils.validators import ConfirmDeliveryForm
 from app.models import ItemTransaction, StatusType, TransactionHistory, TransactionType, User
 from datetime import datetime, timezone
@@ -48,6 +48,9 @@ def confirm():
         )
         seller = User.query.get(item_transaction.seller_id)
         seller.balance += amount
+
+        user = User.query.get(get_jwt_identity())
+        user.last_activity = datetime.now(timezone.utc)
 
         db.session.add(seller_transaction_history)
         db.session.add(buyer_transaction_history)

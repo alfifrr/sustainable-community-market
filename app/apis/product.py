@@ -1,10 +1,10 @@
 from flask import Blueprint, request, jsonify
-from app.models import Product, Address
+from app.models import Product, User
 from app import db
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.utils.decorators import handle_request
 from app.utils.validators import ProductForm
-from datetime import datetime
+from datetime import datetime, timezone
 
 product = Blueprint("product", __name__)
 
@@ -33,6 +33,9 @@ def manage_products():
                     data["expiration_date"].replace("Z", "+00:00")
                 ),
             )
+            user = User.query.get(get_jwt_identity())
+            user.last_activity = datetime.now(timezone.utc)
+
             db.session.add(new_product)
             db.session.commit()
             return (

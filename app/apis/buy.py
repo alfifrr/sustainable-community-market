@@ -5,6 +5,7 @@ from app.utils.validators import BuyProductForm
 from app.models import Address, ItemTransaction, Product, User
 from app import db
 from decimal import Decimal
+from datetime import datetime, timezone
 
 buy = Blueprint("buy", __name__)
 
@@ -13,7 +14,6 @@ buy = Blueprint("buy", __name__)
 @jwt_required()
 @handle_request("POST")
 def buy_product():
-    current_user_id = get_jwt_identity()
     if request.method == "POST":
         data = request.get_json()
         form = BuyProductForm(data=data)
@@ -21,7 +21,7 @@ def buy_product():
             return jsonify(form.get_validation_error()), 400
 
         try:
-            user = User.query.get(current_user_id)
+            user = User.query.get(get_jwt_identity())
             delivery_address = Address.query.get(data["address_id"])
             product = Product.query.get(data["product_id"])
             pickup_address = Address.query.get(product.pickup_address_id)
@@ -53,6 +53,7 @@ def buy_product():
             )
             product.stock -= quantity
             user.balance -= grand_total
+            user.last_activity = datetime.now(timezone.utc)
 
             db.session.add(item_transaction)
             db.session.commit()
