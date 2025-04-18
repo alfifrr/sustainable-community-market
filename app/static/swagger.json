@@ -9,6 +9,10 @@
     {
       "url": "http://localhost:5000",
       "description": "Local development server"
+    },
+    {
+      "url": "https://sustainable-community-market.onrender.com",
+      "description": "Production server"
     }
   ],
   "components": {

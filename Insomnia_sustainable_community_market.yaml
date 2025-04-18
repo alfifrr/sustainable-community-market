@@ -86,7 +86,7 @@ collection:
         meta:
           id: req_1f30ae5bef3a48cbadf19e8051777131
           created: 1744625117190
-          modified: 1744991924973
+          modified: 1745002454791
           isPrivate: false
           sortKey: -1744971318760
         method: POST
@@ -94,11 +94,11 @@ collection:
           mimeType: application/json
           text: |-
             {
-                "username": "usernumber4",
+                "username": "johndoe",
                 "password": "Securepass123!",
-                "first_name": "User",
-                "last_name": "Four",
-                "email": "user4@gmail.com",
+                "first_name": "John",
+                "last_name": "Doe",
+                "email": "john_doe@gmail.com",
                 "phone_number": "081212345678"
             }
         headers:
@@ -168,7 +168,7 @@ collection:
         meta:
           id: req_91e4982b75bf4c22a9f95f6b98cd1b5f
           created: 1744710718743
-          modified: 1744992108467
+          modified: 1745002494045
           isPrivate: false
           sortKey: -1744971318460
         method: POST
@@ -176,7 +176,7 @@ collection:
           mimeType: application/json
           text: |-
             {
-            	"username": "usernumber4",
+            	"username": "johndoe",
             	"password": "Securepass123!"
             }
         headers:
@@ -481,7 +481,7 @@ collection:
         meta:
           id: req_7b6f7471abe44465a5cdc4632b23d10c
           created: 1744723399167
-          modified: 1744992240458
+          modified: 1745002625081
           isPrivate: false
           sortKey: -1744981298703
         method: POST
@@ -501,7 +501,7 @@ collection:
             value: insomnia/11.0.2
         authentication:
           type: bearer
-          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDk5MjE0MCwianRpIjoiM2NlYTZlN2UtMTk5Yi00M2U3LThiNTgtZTc5Nzc4MTQyYmIyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjQiLCJuYmYiOjE3NDQ5OTIxNDAsImNzcmYiOiIwNjk1MzExMC1hYTk3LTRiMzgtYmYyNy03YzFiY2IzNGJmMDIiLCJleHAiOjE3NDQ5OTMwNDB9.CHdxEJLinOmMwqS-Plm3rQ6FQeKFZUTTNdVO7U1L_rQ
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NTAwMjQ5NywianRpIjoiYzY4NmFmYzctOGQyZS00YTkxLTlkY2YtMjUyNjliM2ZkMmU1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NDUwMDI0OTcsImNzcmYiOiJhMWZjM2VkNC1lOThjLTQ1NWQtYmVkMS1mZWEzMjFlM2UzNGUiLCJleHAiOjE3NDUwMDMzOTd9.6rLNznN72H5dZQ6HYesMEwhVfG5VDX561_EXp1VgpMk
         settings:
           renderRequestBody: true
           encodeUrl: true
@@ -602,7 +602,7 @@ collection:
         meta:
           id: req_23458703128a4bc79a0dc01424e3fd6b
           created: 1744783174531
-          modified: 1744992490662
+          modified: 1745002671445
           isPrivate: false
           sortKey: -1744981839111
         method: POST
@@ -612,11 +612,11 @@ collection:
             {
                 "name": "Coway 200ml",
                 "description": "Drinking Wotoh",
-                "price": 2500,
+                "price": 6500,
                 "stock": 15,
                 "category_id": 2,
-                "address_id": 5,
-                "expiration_date": "2050-04-19T23:59:59Z"
+                "address_id": 1,
+                "expiration_date": "2026-04-19T23:59:59Z"
             }
         headers:
           - name: Content-Type
@@ -625,7 +625,7 @@ collection:
             value: insomnia/11.0.2
         authentication:
           type: bearer
-          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NDk5MjE0MCwianRpIjoiM2NlYTZlN2UtMTk5Yi00M2U3LThiNTgtZTc5Nzc4MTQyYmIyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjQiLCJuYmYiOjE3NDQ5OTIxNDAsImNzcmYiOiIwNjk1MzExMC1hYTk3LTRiMzgtYmYyNy03YzFiY2IzNGJmMDIiLCJleHAiOjE3NDQ5OTMwNDB9.CHdxEJLinOmMwqS-Plm3rQ6FQeKFZUTTNdVO7U1L_rQ
+          token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NTAwMjQ5NywianRpIjoiYzY4NmFmYzctOGQyZS00YTkxLTlkY2YtMjUyNjliM2ZkMmU1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NDUwMDI0OTcsImNzcmYiOiJhMWZjM2VkNC1lOThjLTQ1NWQtYmVkMS1mZWEzMjFlM2UzNGUiLCJleHAiOjE3NDUwMDMzOTd9.6rLNznN72H5dZQ6HYesMEwhVfG5VDX561_EXp1VgpMk
         settings:
           renderRequestBody: true
           encodeUrl: true
@@ -749,3 +749,13 @@ environments:
       data:
         API_URL: http://localhost:5000
       color: "#00f5e4"
+    - name: Production
+      meta:
+        id: env_cbdc25000edb41ecbbd657f0e8125411
+        created: 1745002373891
+        modified: 1745002400101
+        isPrivate: false
+        sortKey: 1744624922286
+      data:
+        API_URL: https://sustainable-community-market.onrender.com
+      color: "#f04f33"
