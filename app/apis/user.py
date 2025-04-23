@@ -65,3 +65,14 @@ def users():
         "message": "Users retrieved successfully",
         "data": [user.to_dict() for user in users]
     }), 200
+
+
+@user.route('/users/<int:id>', methods=['GET'])
+@handle_request('')
+def get_user(id):
+    user = User.query.get(id)
+    return jsonify({
+        "status": "success",
+        "message": "Users retrieved successfully",
+        "data": user.to_dict()
+    }), 200
