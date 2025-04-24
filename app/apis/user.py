@@ -84,7 +84,28 @@ def users():
                 500,
             )
     # GET
-    users = User.query.all()
+    query = request.args.get("q", "").strip()
+    if query:
+        users = User.query.filter(
+            db.or_(
+                db.func.lower(User.first_name).like(f"%{query.lower()}%"),
+                db.func.lower(User.last_name).like(f"%{query.lower()}%"),
+            )
+        ).all()
+    else:
+        users = User.query.all()
+    if not users:
+        return (
+            jsonify(
+                {
+                    "status": "success",
+                    "message": "No users found",
+                    "data": [],
+                }
+            ),
+            200,
+        )
+
     return (
         jsonify(
             {

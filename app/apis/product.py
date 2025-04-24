@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.models import Product, User
+from app.models import Product, User, Category
 from app import db
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.utils.decorators import handle_request
@@ -61,7 +61,18 @@ def manage_products():
 @product.route("/products", methods=["GET"])
 @handle_request()
 def get_products():
-    products = Product.query.all()
+    query = request.args.get("q", "").strip()
+    if query:
+        search_term = f"%{query.lower()}%"
+        products = Product.query.filter(
+            db.or_(
+                db.func.lower(Product.name).like(search_term),
+                db.func.lower(Product.description).like(search_term),
+                db.func.lower(Category.name).like(search_term),
+            )
+        ).all()
+    else:
+        products = Product.query.all()
     if not products:
         return (
             jsonify({"status": "success", "message": "No products found", "data": []}),

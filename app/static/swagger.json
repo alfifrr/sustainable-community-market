@@ -84,10 +84,45 @@
       },
       "get": {
         "tags": ["Browse"],
-        "summary": "Get all users",
+        "summary": "Get all users or search users by name",
+        "description": "Retrieve all users or search users by first name or last name",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search query for user name (searches both first and last name)"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "List of users retrieved successfully"
+            "description": "Users retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Users retrieved successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -385,10 +420,45 @@
       },
       "get": {
         "tags": ["Browse"],
-        "summary": "Get all products",
+        "summary": "Get all products or search products",
+        "description": "Retrieve all products or search by name, description, or category",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search query (matches product name, description, or category)"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Products retrieved successfully"
+            "description": "Products retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Products retrieved successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Product"
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
