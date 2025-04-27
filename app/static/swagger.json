@@ -279,10 +279,31 @@
       "post": {
         "tags": ["Authentication"],
         "summary": "Refresh access token",
-        "security": [{ "bearerAuth": [] }],
+        "description": "Get new access token using existing refresh token (insert the refresh token into the Authorize button on the top of the page)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Token refreshed successfully"
+            "description": "Token refreshed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string",
+                      "description": "New access token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid refresh token"
           }
         }
       }
