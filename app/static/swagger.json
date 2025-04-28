@@ -125,6 +125,99 @@
             }
           }
         }
+      },
+      "put": {
+        "tags": ["Manage Self"],
+        "summary": "Update user profile",
+        "description": "Update authenticated user's profile information including username and password",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username",
+                  "old_password",
+                  "password",
+                  "first_name",
+                  "last_name",
+                  "phone_number"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "johndoe",
+                    "minLength": 6,
+                    "pattern": "^[a-z0-9]+$",
+                    "description": "Lowercase letters and numbers only"
+                  },
+                  "old_password": {
+                    "type": "string",
+                    "format": "password",
+                    "description": "Current password for verification"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "minLength": 8,
+                    "description": "Must contain 1 uppercase, 1 number, and 1 symbol"
+                  },
+                  "first_name": {
+                    "type": "string",
+                    "example": "John",
+                    "minLength": 3,
+                    "pattern": "^[a-zA-Z]+$"
+                  },
+                  "last_name": {
+                    "type": "string",
+                    "example": "Doe",
+                    "minLength": 3,
+                    "pattern": "^[a-zA-Z]+$"
+                  },
+                  "phone_number": {
+                    "type": "string",
+                    "example": "1234567890",
+                    "minLength": 10,
+                    "pattern": "^\\d+$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Profile updated successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error (invalid input or duplicate username/phone)"
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          }
+        }
       }
     },
     "/api/users/{id}": {

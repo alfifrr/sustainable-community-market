@@ -4,7 +4,7 @@ from .product import ProductForm
 from .balance import DepositForm, WithdrawalForm
 from .buy import BuyProductForm
 from .manage_status import ProcessForm, CancelForm, ConfirmDeliveryForm, RatingForm
-
+from .profile_update import ProfileUpdateForm
 
 __all__ = [
     "AddressForm",
@@ -16,5 +16,6 @@ __all__ = [
     'ProcessForm',
     'CancelForm',
     "ConfirmDeliveryForm",
-    "RatingForm"
+    "RatingForm",
+    "ProfileUpdateForm"
 ]
