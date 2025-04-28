@@ -11,6 +11,7 @@ from .category import category
 from .manage_address import manage_address
 from .cancel import cancel
 from .manage_product import manage_product
+from .user_profile import profile
 
 blueprints = [
     (user, '/api'),
@@ -25,5 +26,6 @@ blueprints = [
     (category, '/api'),
     (manage_address, '/api'),
     (cancel, '/api'),
-    (manage_product, '/api')
+    (manage_product, '/api'),
+    (profile, '/api')
 ]

@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.models import User
-from app import db, bcrypt
+from app import db
 from app.utils.validators import SignupForm, ProfileUpdateForm
 from app.utils.decorators import handle_request
 from flask_jwt_extended import jwt_required, get_jwt_identity
