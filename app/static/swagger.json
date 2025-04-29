@@ -807,33 +807,64 @@
         "summary": "Process delivery for an order",
         "security": [{ "bearerAuth": [] }],
         "description": "Start processing a delivery for a confirmed transaction",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "type": "string",
-            "required": true,
-            "description": "Bearer token for authentication"
-          },
-          {
-            "in": "body",
-            "name": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "transaction_id": {
-                  "type": "integer",
-                  "example": 5
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["transaction_id"],
+                "properties": {
+                  "transaction_id": {
+                    "type": "integer",
+                    "example": 5,
+                    "description": "ID of the transaction to process"
+                  }
                 }
-              },
-              "required": ["transaction_id"]
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
-            "description": "Delivery processing started successfully"
+            "description": "Delivery processing started successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Order processed successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "delivery_status": {
+                          "type": "string",
+                          "enum": [
+                            "pending",
+                            "processed",
+                            "cancelled",
+                            "delivered"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
           },
           "401": {
             "description": "Unauthorized - Invalid or missing token"

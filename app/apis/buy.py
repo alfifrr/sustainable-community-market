@@ -49,7 +49,8 @@ def buy_product():
                 product_id=product.id,
                 seller_id=product.user_id,
                 buyer_id=user.id,
-                original_price=original_total_price
+                original_price=original_total_price,
+                product_details=product.to_dict()
             )
             product.stock -= quantity
             user.balance -= grand_total
