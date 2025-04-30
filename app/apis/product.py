@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from app.models import Product, User, Category
 from app import db
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.utils.decorators import handle_request
+from app.utils.decorators import handle_request, role_required
 from app.utils.validators import ProductForm
 from datetime import datetime, timezone
 
@@ -12,6 +12,7 @@ product = Blueprint("product", __name__)
 @product.route("/products", methods=["POST"])
 @jwt_required()
 @handle_request("POST")
+@role_required('seller')
 def manage_products():
     if request.method == "POST":
         data = request.get_json()
@@ -52,7 +53,8 @@ def manage_products():
             db.session.rollback()
             return (
                 jsonify(
-                    {"status": "error", "error": "Server error", "message": str(e)}
+                    {"status": "error", "error": "Server error",
+                        "message": str(e)}
                 ),
                 500,
             )
@@ -75,7 +77,8 @@ def get_products():
         products = Product.query.all()
     if not products:
         return (
-            jsonify({"status": "success", "message": "No products found", "data": []}),
+            jsonify(
+                {"status": "success", "message": "No products found", "data": []}),
             200,
         )
     return (
@@ -96,7 +99,8 @@ def get_product(id):
     product = Product.query.get(id)
     if product is None:
         return (
-            jsonify({"status": "error", "message": f"Product with id {id} not found"}),
+            jsonify(
+                {"status": "error", "message": f"Product with id {id} not found"}),
             404,
         )
     return (

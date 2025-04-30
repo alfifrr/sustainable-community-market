@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.utils.decorators import handle_request
+from app.utils.decorators import handle_request, role_required
 from app.utils.validators import BuyProductForm
 from app.models import Address, ItemTransaction, Product, User
 from app import db
@@ -13,6 +13,7 @@ buy = Blueprint("buy", __name__)
 @buy.route("/buy", methods=["POST"])
 @jwt_required()
 @handle_request("POST")
+@role_required('buyer')
 def buy_product():
     if request.method == "POST":
         data = request.get_json()

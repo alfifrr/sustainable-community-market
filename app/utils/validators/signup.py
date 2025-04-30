@@ -1,10 +1,17 @@
 from app.utils.validators.base import BaseForm
-from wtforms import StringField, PasswordField
+from wtforms import StringField, PasswordField, IntegerField
 from wtforms.validators import (
     Email, Length,
     InputRequired,
-    Regexp
+    Regexp, ValidationError
 )
+from app.models import Role
+
+
+def validate_role_id(form, field):
+    role = Role.query.get(field.data)
+    if not role:
+        raise ValidationError('Invalid role selected')
 
 
 class SignupForm(BaseForm):
@@ -43,4 +50,9 @@ class SignupForm(BaseForm):
         InputRequired(message="Phone number is required"),
         Length(min=10, message="Phone number must be at least 10 digits long"),
         Regexp(r'^\d+$', message="Phone number can only contain digits")
+    ])
+
+    role_id = IntegerField('role_id', validators=[
+        InputRequired(message="Role is required"),
+        validate_role_id
     ])

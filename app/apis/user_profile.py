@@ -8,7 +8,7 @@ profile = Blueprint('profile', __name__)
 
 @profile.route('/profile', methods=['GET'])
 @jwt_required()
-@handle_request('')
+@handle_request()
 def view_profile():
     user = User.query.get(get_jwt_identity())
     if not user:

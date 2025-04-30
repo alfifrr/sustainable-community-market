@@ -1,4 +1,4 @@
-from app.models import Category
+from app.models import Category, Role, RoleType
 from app import db
 
 
@@ -57,3 +57,33 @@ def seed_product_categories():
     except Exception as e:
         db.session.rollback()
         print(f"Error seeding categories: {str(e)}")
+
+
+def seed_roles():
+    default_roles = [
+        {
+            "name": RoleType.ADMIN,
+            "description": "System administrator with full access"
+        },
+        {
+            "name": RoleType.SELLER,
+            "description": "Verified seller account"
+        },
+        {
+            "name": RoleType.BUYER,
+            "description": "Regular user account"
+        }
+    ]
+
+    for role in default_roles:
+        exists = Role.query.filter_by(name=role["name"]).first()
+        if not exists:
+            new_role = Role(name=role["name"], description=role["description"])
+            db.session.add(new_role)
+
+    try:
+        db.session.commit()
+        print("Roles seeded successfully")
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error seeding roles: {str(e)}")

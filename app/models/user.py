@@ -2,6 +2,8 @@ from secrets import token_urlsafe
 from app import bcrypt, db
 from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime, timezone
+from typing import List
+from .role import RoleType
 
 
 class User(db.Model):
@@ -38,6 +40,10 @@ class User(db.Model):
         db.String(255), unique=True, nullable=True
     )
 
+    role_id: Mapped[int] = mapped_column(
+        db.Integer, db.ForeignKey('roles.id'), nullable=True
+    )
+
     # rel
     addresses = db.relationship(
         "Address", back_populates="user", lazy="dynamic")
@@ -50,6 +56,7 @@ class User(db.Model):
     # purchases = db.relationship(
     #     "ItemTransaction", foreign_keys="ItemTransaction.buyer_id"
     # )
+    role = db.relationship('Role', back_populates='users')
 
     def generate_activation_token(self):
         self.activation_token = token_urlsafe(32)
@@ -65,6 +72,21 @@ class User(db.Model):
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
+
+    # Add helper methods for RBAC
+    def has_role(self, role: RoleType | str) -> bool:
+        if isinstance(role, str):
+            return self.role.name.value == role
+        return self.role.name == role
+
+    def is_admin(self) -> bool:
+        return self.has_role(RoleType.ADMIN)
+
+    def is_seller(self) -> bool:
+        return self.has_role(RoleType.SELLER)
+
+    def is_buyer(self) -> bool:
+        return self.has_role(RoleType.BUYER)
 
     def __repr__(self):
         return f"<User {self.username}"
@@ -88,6 +110,7 @@ class User(db.Model):
                 self.last_activity.isoformat() if self.last_activity else None
             ),
             "is_verified": self.is_verified,
+            "role": self.role.name
         }
 
     def to_dict(self):
@@ -102,4 +125,5 @@ class User(db.Model):
                 self.last_activity.isoformat() if self.last_activity else None
             ),
             "is_verified": self.is_verified,
+            "role": self.role.name
         }

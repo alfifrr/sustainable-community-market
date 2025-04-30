@@ -1,9 +1,38 @@
 from functools import wraps
 from flask_jwt_extended import get_jwt_identity
 from app.models import User
-from flask import jsonify, request
+from flask import jsonify, request, abort
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.exceptions import BadRequest
+
+
+def role_required(allowed_roles: list[str] | str):
+    if isinstance(allowed_roles, str):
+        allowed_roles = [allowed_roles]
+
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            current_user_id = get_jwt_identity()
+            user = User.query.get(current_user_id)
+
+            if not user:
+                return jsonify({
+                    'status': 'error',
+                    'error': 'Authentication error',
+                    'message': 'User not found'
+                }), 401
+
+            if not any(user.has_role(role) for role in allowed_roles):
+                return jsonify({
+                    'status': 'error',
+                    'error': 'Authorization error',
+                    'message': 'Insufficient permissions for this operation'
+                }), 403
+
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
 
 
 def verified_only(f):

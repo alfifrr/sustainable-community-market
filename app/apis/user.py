@@ -60,6 +60,7 @@ def users():
                 last_name=data["last_name"],
                 email=data["email"],
                 phone_number=data["phone_number"],
+                role_id=data['role_id']
             )
             new_user.set_password(data["password"])
             new_user.generate_activation_token()
@@ -122,7 +123,7 @@ def users():
 
 
 @user.route("/users/<int:id>", methods=["GET"])
-@handle_request("")
+@handle_request()
 def get_user(id):
     user = User.query.get(id)
     if user is None:

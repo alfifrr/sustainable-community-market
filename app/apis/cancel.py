@@ -2,10 +2,11 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 from app.models import ItemTransaction, User, Product, StatusType
-from app.utils.decorators import handle_request
+from app.utils.decorators import handle_request, role_required
 from app.utils.validators import CancelForm
 from decimal import Decimal
 from datetime import datetime, timezone
+
 
 cancel = Blueprint('cancel', __name__)
 
@@ -13,6 +14,7 @@ cancel = Blueprint('cancel', __name__)
 @cancel.route('/cancel', methods=['POST'])
 @jwt_required()
 @handle_request('POST')
+@role_required('buyer')
 def cancel_product():
     data = request.get_json()
     form = CancelForm(data=data)

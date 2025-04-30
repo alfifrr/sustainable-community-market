@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.utils.decorators import handle_request
+from app.utils.decorators import handle_request, role_required
 from app.utils.validators import ProcessForm, RatingForm
 from app.models import ItemTransaction, StatusType, User
 from app import db
@@ -12,6 +12,7 @@ manage_status = Blueprint('manage_status', __name__)
 @manage_status.route('/process', methods=['POST'])
 @jwt_required()
 @handle_request('POST')
+@role_required('seller')
 def process_product():
     data = request.get_json()
     form = ProcessForm(data=data)
@@ -41,6 +42,7 @@ def process_product():
 @manage_status.route('/rate', methods=['POST'])
 @jwt_required()
 @handle_request('POST')
+@role_required('buyer')
 def rate_product():
     data = request.get_json()
     form = RatingForm(data=data)

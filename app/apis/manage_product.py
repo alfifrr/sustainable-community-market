@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.utils.decorators import handle_request
+from app.utils.decorators import handle_request, role_required
 from app.utils.validators import ProductForm
 from app.models import Product, User
 from app import db
@@ -12,6 +12,7 @@ manage_product = Blueprint('manage_product', __name__)
 @manage_product.route('/products/<int:product_id>', methods=['PUT', 'DELETE'])
 @jwt_required()
 @handle_request('PUT')
+@role_required(['seller', 'admin'])
 def manage_product_by_id(product_id):
     current_user_id = get_jwt_identity()
     product = Product.query.filter_by(

@@ -32,8 +32,22 @@
           "first_name": { "type": "string" },
           "last_name": { "type": "string" },
           "email": { "type": "string", "format": "email" },
-          "phone_number": { "type": "string" }
-        }
+          "phone_number": { "type": "string" },
+          "role_id": {
+            "type": "integer",
+            "description": "User role ID (1: admin, 2: seller, 3: buyer)",
+            "example": 3
+          }
+        },
+        "required": [
+          "username",
+          "password",
+          "first_name",
+          "last_name",
+          "email",
+          "phone_number",
+          "role_id"
+        ]
       },
       "Address": {
         "type": "object",

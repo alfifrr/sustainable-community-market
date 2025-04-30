@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
-from app.utils.decorators import handle_request, get_jwt_identity
+from app.utils.decorators import handle_request, role_required
 from app.utils.validators import ConfirmDeliveryForm
 from app.models import ItemTransaction, StatusType, TransactionHistory, TransactionType, User
 from datetime import datetime, timezone
@@ -12,6 +12,7 @@ confirm_delivery = Blueprint('confirm_delivery', __name__)
 @confirm_delivery.route('/confirm-delivery', methods=['POST'])
 @jwt_required()
 @handle_request('POST')
+@role_required(['admin', 'buyer'])
 def confirm():
     data = request.get_json()
     form = ConfirmDeliveryForm(data=data)
