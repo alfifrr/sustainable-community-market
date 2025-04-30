@@ -904,14 +904,62 @@
                   "address_id": { "type": "integer" },
                   "product_id": { "type": "integer" },
                   "quantity": { "type": "integer" }
-                }
+                },
+                "required": ["address_id", "product_id", "quantity"]
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Purchase successful"
+            "description": "Purchase successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer" },
+                    "quantity": { "type": "integer" },
+                    "original_price": { "type": "number" },
+                    "total_price": { "type": "number" },
+                    "delivery_fee": { "type": "number" },
+                    "grand_total": { "type": "number" },
+                    "discount_details": {
+                      "type": "object",
+                      "properties": {
+                        "expiration": {
+                          "type": "object",
+                          "properties": {
+                            "percentage": { "type": "number" },
+                            "amount": { "type": "number" }
+                          }
+                        },
+                        "bulk": {
+                          "type": "object",
+                          "properties": {
+                            "percentage": { "type": "number" },
+                            "amount": { "type": "number" }
+                          }
+                        }
+                      }
+                    },
+                    "product_details": { "type": "object" },
+                    "pickup_address_details": { "type": "object" },
+                    "delivery_address_details": { "type": "object" },
+                    "created_at": { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "422": {
+            "description": "Insufficient funds"
+          },
+          "500": {
+            "description": "Server error"
           }
         }
       }

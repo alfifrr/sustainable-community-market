@@ -13,7 +13,7 @@ buy = Blueprint("buy", __name__)
 @buy.route("/buy", methods=["POST"])
 @jwt_required()
 @handle_request("POST")
-@role_required('buyer')
+@role_required("buyer")
 def buy_product():
     if request.method == "POST":
         data = request.get_json()
@@ -26,19 +26,27 @@ def buy_product():
             delivery_address = Address.query.get(data["address_id"])
             product = Product.query.get(data["product_id"])
             pickup_address = Address.query.get(product.pickup_address_id)
-
-            today_price = Decimal(product.get_discounted_price())
             quantity = data["quantity"]
             original_total_price = product.price * quantity
-            total_price = today_price * quantity
-            delivery_fee = Decimal('15000')
+
+            # Calculate discounted price with details
+            total_price, discount_details = product.calculate_total_discount(quantity)
+
+            total_price = Decimal(str(total_price))
+
+            delivery_fee = Decimal("15000")
             grand_total = total_price + delivery_fee
             if user.balance < grand_total:
-                return jsonify({
-                    'status': 'error',
-                    'error': 'Insufficient funds',
-                    'message': f'Available balance {user.balance} is less than price {grand_total} incl. shipping (15000)'
-                }), 422
+                return (
+                    jsonify(
+                        {
+                            "status": "error",
+                            "error": "Insufficient funds",
+                            "message": f"Available balance {user.balance} is less than price {grand_total} incl. shipping (15000)",
+                        }
+                    ),
+                    422,
+                )
 
             item_transaction = ItemTransaction(
                 quantity=quantity,
@@ -51,7 +59,10 @@ def buy_product():
                 seller_id=product.user_id,
                 buyer_id=user.id,
                 original_price=original_total_price,
-                product_details=product.to_dict()
+                product_details={
+                    **product.to_dict(),
+                    "applied_discounts": discount_details,
+                },
             )
             product.stock -= quantity
             user.balance -= grand_total
@@ -59,13 +70,18 @@ def buy_product():
 
             db.session.add(item_transaction)
             db.session.commit()
-            return jsonify(item_transaction.to_dict()), 201
+
+            response_data = item_transaction.to_dict()
+            response_data["discount_details"] = discount_details
+            response_data["delivery_fee"] = float(delivery_fee)
+            response_data["grand_total"] = float(grand_total)
+
+            return jsonify(response_data), 201
         except Exception as e:
             db.session.rollback()
             return (
                 jsonify(
-                    {"status": "error", "error": "Server error",
-                        "message": str(e)}
+                    {"status": "error", "error": "Server error", "message": str(e)}
                 ),
                 500,
             )
