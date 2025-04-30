@@ -957,45 +957,78 @@
         "tags": ["Buyer"],
         "summary": "Rate a purchased product",
         "security": [{ "bearerAuth": [] }],
-        "description": "Submit a rating for a product after successful delivery confirmation",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "type": "string",
-            "required": true,
-            "description": "Bearer token for authentication"
-          },
-          {
-            "in": "body",
-            "name": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "transaction_id": {
-                  "type": "integer",
-                  "example": 1,
-                  "description": "ID of the completed transaction"
+        "description": "Submit a rating and optional testimonial for a product after successful delivery confirmation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "transaction_id": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "ID of the completed transaction"
+                  },
+                  "rating": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5,
+                    "example": 5,
+                    "description": "Rating value between 1-5 stars"
+                  },
+                  "testimonial": {
+                    "type": "string",
+                    "example": "Great product and excellent seller service!",
+                    "maxLength": 1000,
+                    "description": "Optional review text for the product"
+                  }
                 },
-                "rating": {
-                  "type": "integer",
-                  "minimum": 1,
-                  "maximum": 5,
-                  "example": 5,
-                  "description": "Rating value between 1-5 stars"
-                }
-              },
-              "required": ["transaction_id", "rating"]
+                "required": ["transaction_id", "rating"]
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
-            "description": "Rating submitted successfully"
+            "description": "Review submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Review submitted successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "rating": {
+                          "type": "integer",
+                          "example": 5
+                        },
+                        "testimonial": {
+                          "type": "string",
+                          "example": "Great product and excellent seller service!"
+                        },
+                        "review_date": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "Invalid rating value or transaction not eligible for rating"
+            "description": "Invalid rating value, testimonial too long, or transaction not eligible for rating"
           },
           "401": {
             "description": "Unauthorized - Invalid or missing token"

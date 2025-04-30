@@ -1,6 +1,6 @@
 from app.utils.validators.base import BaseForm
-from wtforms import IntegerField
-from wtforms.validators import DataRequired, NumberRange, ValidationError
+from wtforms import IntegerField, StringField
+from wtforms.validators import DataRequired, NumberRange, ValidationError, Optional, Length
 from flask_jwt_extended import get_jwt_identity
 from app.models import ItemTransaction, StatusType
 
@@ -58,6 +58,12 @@ class RatingForm(BaseForm):
         DataRequired(message='Rating is required'),
         NumberRange(min=1, max=5, message='Rating must be between 1 and 5')
     ])
+    testimonial = StringField(
+        'Testimonial',
+        validators=[
+            Optional(),
+            Length(max=1000, message='Testimonial must not exceed 1000 characters')
+        ])
 
     def validate_transaction_id(self, field):
         current_user_id = get_jwt_identity()

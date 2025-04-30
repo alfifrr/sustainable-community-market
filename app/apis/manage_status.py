@@ -49,14 +49,17 @@ def rate_product():
     try:
         item_transaction = ItemTransaction.query.get(data['transaction_id'])
         item_transaction.delivery_status = StatusType.RATED
-        item_transaction.rating = data['rating']
+        item_transaction.submit_review(
+            rating=data['rating'],
+            testimonial=data.get('testimonial')
+        )
         user = User.query.get(get_jwt_identity())
         user.last_activity = datetime.now(timezone.utc)
 
         db.session.commit()
         return jsonify({
             'status': 'success',
-            'message': 'Order rated successfully',
+            'message': 'Review submitted successfully',
             'data': item_transaction.to_dict()
         }), 200
     except Exception as e:

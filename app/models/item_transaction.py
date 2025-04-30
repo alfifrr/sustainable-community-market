@@ -35,8 +35,15 @@ class ItemTransaction(db.Model):
         db.Enum(StatusType), nullable=False, default=StatusType.PENDING
     )
     product_details = db.Column(db.JSON, nullable=False)
+
     rating: Mapped[int] = mapped_column(
         db.Integer, nullable=True, comment="Rating from buyer to seller (1-5)"
+    )
+    testimonial: Mapped[str] = mapped_column(
+        db.String(1000), nullable=True, comment='Product review text from the buyer'
+    )
+    review_date: Mapped[datetime] = mapped_column(
+        db.DateTime, nullable=True, comment="Timestamp when review was submitted"
     )
 
     # FK
@@ -70,6 +77,11 @@ class ItemTransaction(db.Model):
         backref=db.backref("buyer_transactions", lazy="dynamic"),
     )
 
+    def submit_review(self, rating: int, testimonial: str | None) -> None:
+        self.rating = rating
+        self.testimonial = testimonial
+        self.review_date = datetime.now(timezone.utc)
+
     def to_dict(self):
         return {
             "id": self.id,
@@ -86,6 +98,8 @@ class ItemTransaction(db.Model):
                 else StatusType.PENDING.value
             ),
             "rating": self.rating,
+            "testimonial": self.testimonial,
+            "review_date": self.review_date,
             "product": {"id": self.product.id, "name": self.product.name} if self.product else None,
             "seller": (
                 {
