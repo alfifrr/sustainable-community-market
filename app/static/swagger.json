@@ -1198,6 +1198,102 @@
         }
       }
     },
+    "/api/product-history/{id}": {
+      "get": {
+        "tags": ["History"],
+        "summary": "Get product history by ID",
+        "description": "Retrieve specific product transaction by ID for the authenticated user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Transaction ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved transaction",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Transaction retrieved successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "quantity": {
+                          "type": "integer"
+                        },
+                        "total_price": {
+                          "type": "number"
+                        },
+                        "delivery_status": {
+                          "type": "string",
+                          "enum": [
+                            "pending",
+                            "processed",
+                            "cancelled",
+                            "delivered",
+                            "rated"
+                          ]
+                        },
+                        "rating": {
+                          "type": "integer"
+                        },
+                        "testimonial": {
+                          "type": "string"
+                        },
+                        "review_date": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          },
+          "403": {
+            "description": "Forbidden - Token expired or invalid permissions"
+          },
+          "404": {
+            "description": "Transaction not found or you don't have permission to view it"
+          }
+        }
+      }
+    },
     "/api/transactions": {
       "get": {
         "tags": ["History"],
