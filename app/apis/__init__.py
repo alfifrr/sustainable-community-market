@@ -12,20 +12,22 @@ from .manage_address import manage_address
 from .cancel import cancel
 from .manage_product import manage_product
 from .user_profile import profile
+from .processed_products import processed_products
 
 blueprints = [
-    (user, '/api'),
-    (auth, '/api'),
-    (address, '/api'),
-    (product, '/api'),
-    (balance, '/api'),
-    (buy, '/api'),
-    (manage_status, '/api'),
-    (confirm_delivery, '/api'),
-    (history, '/api'),
-    (category, '/api'),
-    (manage_address, '/api'),
-    (cancel, '/api'),
-    (manage_product, '/api'),
-    (profile, '/api')
+    (user, "/api"),
+    (auth, "/api"),
+    (address, "/api"),
+    (product, "/api"),
+    (balance, "/api"),
+    (buy, "/api"),
+    (manage_status, "/api"),
+    (confirm_delivery, "/api"),
+    (history, "/api"),
+    (category, "/api"),
+    (manage_address, "/api"),
+    (cancel, "/api"),
+    (manage_product, "/api"),
+    (profile, "/api"),
+    (processed_products, "/api"),
 ]

@@ -1334,6 +1334,157 @@
           }
         }
       }
+    },
+    "/api/processed-products": {
+      "get": {
+        "tags": ["Expedition"],
+        "summary": "Get all processed products",
+        "description": "Retrieve all products with PROCESSED delivery status",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved processed products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Processed products retrieved successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "quantity": {
+                            "type": "integer"
+                          },
+                          "total_price": {
+                            "type": "number"
+                          },
+                          "delivery_status": {
+                            "type": "string",
+                            "enum": ["processed"]
+                          },
+                          "pickup_address_details": {
+                            "type": "object"
+                          },
+                          "delivery_address_details": {
+                            "type": "object"
+                          },
+                          "product_details": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          },
+          "403": {
+            "description": "Forbidden - User must be admin or expedition"
+          }
+        }
+      }
+    },
+    "/api/processed-products/{id}": {
+      "get": {
+        "tags": ["Expedition"],
+        "summary": "Get processed product by ID",
+        "description": "Retrieve specific processed product by ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Transaction ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved processed product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Processed product retrieved successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "quantity": {
+                          "type": "integer"
+                        },
+                        "total_price": {
+                          "type": "number"
+                        },
+                        "delivery_status": {
+                          "type": "string",
+                          "enum": ["processed"]
+                        },
+                        "pickup_address_details": {
+                          "type": "object"
+                        },
+                        "delivery_address_details": {
+                          "type": "object"
+                        },
+                        "product_details": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          },
+          "403": {
+            "description": "Forbidden - User must be admin or expedition"
+          },
+          "404": {
+            "description": "Processed product not found"
+          }
+        }
+      }
     }
   }
 }

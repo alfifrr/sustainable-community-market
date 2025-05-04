@@ -8,6 +8,7 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from sqlalchemy_utils import database_exists, create_database
 from dotenv import load_dotenv
+
 load_dotenv(override=True)
 
 
@@ -27,7 +28,7 @@ def create_app(config=None):
 
     url = environ.get("POSTGRESQL_URL")
     if not url:
-        raise ValueError('POSTGRESQL_URL environment variable is not set')
+        raise ValueError("POSTGRESQL_URL environment variable is not set")
 
     try:
         if not database_exists(url):
@@ -42,15 +43,16 @@ def create_app(config=None):
     app.config.update(
         SQLALCHEMY_DATABASE_URI=url,
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
-        JWT_SECRET_KEY=environ.get('SECRET_KEY'),
-        SECRET_KEY=environ.get('SECRET_KEY'),
+        JWT_SECRET_KEY=environ.get("SECRET_KEY"),
+        SECRET_KEY=environ.get("SECRET_KEY"),
         WTF_CSRF_ENABLED=False,
-        MAIL_SERVER=environ.get('MAIL_SERVER'),
+        MAIL_SERVER=environ.get("MAIL_SERVER"),
         MAIL_PORT=587,
         MAIL_USE_TLS=True,
-        MAIL_USERNAME=environ.get('MAIL_USERNAME'),
-        MAIL_PASSWORD=environ.get('MAIL_PASSWORD'),
-        MAIL_DEFAULT_SENDER=environ.get('MAIL_SENDER'))
+        MAIL_USERNAME=environ.get("MAIL_USERNAME"),
+        MAIL_PASSWORD=environ.get("MAIL_PASSWORD"),
+        MAIL_DEFAULT_SENDER=environ.get("MAIL_SENDER"),
+    )
 
     if config:
         app.config.update(config)
@@ -65,6 +67,7 @@ def create_app(config=None):
         try:
             db.create_all()
             from app.models.seeder import seed_product_categories, seed_roles
+
             seed_product_categories()
             seed_roles()
             print("Database tables created and seeded successfully")
