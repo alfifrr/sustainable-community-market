@@ -13,6 +13,7 @@ from .cancel import cancel
 from .manage_product import manage_product
 from .user_profile import profile
 from .processed_products import processed_products
+from .product_review import product_review
 
 blueprints = [
     (user, "/api"),
@@ -30,4 +31,5 @@ blueprints = [
     (manage_product, "/api"),
     (profile, "/api"),
     (processed_products, "/api"),
+    (product_review, "/api"),
 ]

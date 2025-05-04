@@ -1485,6 +1485,99 @@
           }
         }
       }
+    },
+    "/api/products/{product_id}/reviews": {
+      "get": {
+        "tags": ["Browse"],
+        "summary": "Get product reviews",
+        "description": "Retrieve all ratings and reviews for a specific product",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Product ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved product reviews",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Product reviews retrieved successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "product_id": {
+                          "type": "integer"
+                        },
+                        "total_reviews": {
+                          "type": "integer"
+                        },
+                        "average_rating": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 4.5
+                        },
+                        "reviews": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "rating": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 5
+                              },
+                              "testimonial": {
+                                "type": "string"
+                              },
+                              "review_date": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "reviewer": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
     }
   }
 }
