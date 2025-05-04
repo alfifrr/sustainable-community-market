@@ -25,10 +25,8 @@ class ItemTransaction(db.Model):
         onupdate=lambda: datetime.now(timezone.utc),
     )
     quantity: Mapped[int] = mapped_column(db.Integer, nullable=False)
-    original_price: Mapped[float] = mapped_column(
-        db.Numeric(10, 2), nullable=False)
-    total_price: Mapped[float] = mapped_column(
-        db.Numeric(10, 2), nullable=False)
+    original_price: Mapped[float] = mapped_column(db.Numeric(10, 2), nullable=False)
+    total_price: Mapped[float] = mapped_column(db.Numeric(10, 2), nullable=False)
     pickup_address_details = db.Column(db.JSON, nullable=False)
     delivery_address_details = db.Column(db.JSON, nullable=False)
     delivery_status: Mapped[StatusType] = mapped_column(
@@ -40,15 +38,26 @@ class ItemTransaction(db.Model):
         db.Integer, nullable=True, comment="Rating from buyer to seller (1-5)"
     )
     testimonial: Mapped[str] = mapped_column(
-        db.String(1000), nullable=True, comment='Product review text from the buyer'
+        db.String(1000), nullable=True, comment="Product review text from the buyer"
     )
     review_date: Mapped[datetime] = mapped_column(
         db.DateTime, nullable=True, comment="Timestamp when review was submitted"
     )
+    confirmed_by_id: Mapped[int] = mapped_column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=True,
+        comment="ID of the user (expedition/courier) who confirmed the delivery",
+    )
+    confirmation_date: Mapped[datetime] = mapped_column(
+        db.DateTime(timezone=True),
+        nullable=True,
+        comment="Timestamp when delivery was confirmed",
+    )
 
     # FK
     product_id: Mapped[int] = mapped_column(
-        db.Integer, db.ForeignKey("products.id", ondelete='SET NULL'), nullable=True
+        db.Integer, db.ForeignKey("products.id", ondelete="SET NULL"), nullable=True
     )
     pickup_address_id: Mapped[int] = mapped_column(
         db.Integer, db.ForeignKey("addresses.id"), nullable=False
@@ -64,8 +73,7 @@ class ItemTransaction(db.Model):
     )
 
     # rel
-    product = db.relationship(
-        "Product", backref="transactions", passive_deletes=True)
+    product = db.relationship("Product", backref="transactions", passive_deletes=True)
     seller = db.relationship(
         "User",
         foreign_keys=[seller_id],
@@ -75,6 +83,11 @@ class ItemTransaction(db.Model):
         "User",
         foreign_keys=[buyer_id],
         backref=db.backref("buyer_transactions", lazy="dynamic"),
+    )
+    confirmed_by = db.relationship(
+        "User",
+        foreign_keys=[confirmed_by_id],
+        backref=db.backref("confirmed_deliveries", lazy="dynamic"),
     )
 
     def submit_review(self, rating: int, testimonial: str | None) -> None:
@@ -100,7 +113,11 @@ class ItemTransaction(db.Model):
             "rating": self.rating,
             "testimonial": self.testimonial,
             "review_date": self.review_date,
-            "product": {"id": self.product.id, "name": self.product.name} if self.product else None,
+            "product": (
+                {"id": self.product.id, "name": self.product.name}
+                if self.product
+                else None
+            ),
             "seller": (
                 {
                     "id": self.seller.id,
@@ -117,4 +134,19 @@ class ItemTransaction(db.Model):
                 if self.buyer
                 else None
             ),
+            "confirmation_details": {
+                "confirmed_by": (
+                    {
+                        "id": self.confirmed_by.id,
+                        "name": f"{self.confirmed_by.first_name} {self.confirmed_by.last_name}",
+                    }
+                    if self.confirmed_by
+                    else None
+                ),
+                "confirmation_date": (
+                    self.confirmation_date.isoformat()
+                    if self.confirmation_date
+                    else None
+                ),
+            },
         }
