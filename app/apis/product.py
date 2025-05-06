@@ -33,6 +33,10 @@ def manage_products():
                 expiration_date=datetime.fromisoformat(
                     data["expiration_date"].replace("Z", "+00:00")
                 ),
+                is_sustainable=data.get("is_sustainable", False),
+                sustainability_certifications=data.get(
+                    "sustainability_certifications", []
+                ),
             )
             user = User.query.get(get_jwt_identity())
             user.last_activity = datetime.now(timezone.utc)

@@ -69,6 +69,65 @@
           "address_id": { "type": "integer" },
           "expiration_date": { "type": "string", "format": "date-time" }
         }
+      },
+      "SustainabilityCertification": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Organic Certified"
+          },
+          "description": {
+            "type": "string",
+            "example": "Products that are grown and processed using organic farming methods"
+          },
+          "icon": {
+            "type": "string",
+            "example": "eco_leaf"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ProductCertification": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "product_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "certification_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "approved", "rejected"],
+            "example": "pending"
+          },
+          "verification_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "verified_by": {
+            "type": "integer",
+            "example": 1
+          }
+        }
       }
     }
   },
@@ -1651,7 +1710,178 @@
         }
       }
     },
-
+    "/api/sustainability/certifications": {
+      "get": {
+        "tags": ["Certifications"],
+        "summary": "Get all sustainability certifications",
+        "description": "Retrieve all available sustainability certifications",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved certifications",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Certifications retrieved successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SustainabilityCertification"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sustainability/product-certifications": {
+      "get": {
+        "tags": ["Certifications"],
+        "summary": "Get all product certifications",
+        "description": "Retrieve all product sustainability certifications",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved product certifications",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Product certifications retrieved successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ProductCertification"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sustainability/product-certifications/{product_id}": {
+      "get": {
+        "tags": ["Certifications"],
+        "summary": "Get certifications for a specific product",
+        "description": "Retrieve all sustainability certifications for a specific product",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the product"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved product certifications",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Product certifications retrieved successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ProductCertification"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        }
+      }
+    },
+    "/api/sustainability/product-certifications/{certification_id}/verify": {
+      "post": {
+        "tags": ["Certifications"],
+        "summary": "Verify a product certification",
+        "description": "Admin can verify and approve a product's sustainability certification",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "certification_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the product certification to verify"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully verified certification",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Certification verified successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ProductCertification"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          },
+          "403": {
+            "description": "Forbidden - User must be an admin"
+          },
+          "404": {
+            "description": "Certification not found"
+          }
+        }
+      }
+    },
     "/api/confirm-delivery": {
       "post": {
         "tags": ["Expedition"],

@@ -66,10 +66,15 @@ def create_app(config=None):
     with app.app_context():
         try:
             db.create_all()
-            from app.models.seeder import seed_product_categories, seed_roles
+            from app.models.seeder import (
+                seed_product_categories,
+                seed_roles,
+                seed_sustainability_certifications,
+            )
 
             seed_product_categories()
             seed_roles()
+            seed_sustainability_certifications()
             print("Database tables created and seeded successfully")
         except Exception as e:
             print(f"Error creating tables: {str(e)}")

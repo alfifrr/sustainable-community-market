@@ -5,6 +5,8 @@ from .product import Product
 from .transaction_history import TransactionHistory, TransactionType
 from .item_transaction import ItemTransaction, StatusType
 from .role import Role, RoleType
+from .sustainability_certifications import SustainabilityCertification
+from .product_certifications import ProductCertification, CertificationStatus
 
 __all__ = [
     "User",
@@ -16,5 +18,8 @@ __all__ = [
     "ItemTransaction",
     "StatusType",
     "Role",
-    "RoleType"
+    "RoleType",
+    "SustainabilityCertification",
+    "ProductCertification",
+    "CertificationStatus",
 ]

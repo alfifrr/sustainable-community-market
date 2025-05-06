@@ -11,6 +11,8 @@ class Product(db.Model):
     description: Mapped[str] = mapped_column(db.String(255), nullable=False)
     price: Mapped[int] = mapped_column(db.Integer, nullable=False)
     stock: Mapped[int] = mapped_column(db.Integer, nullable=False)
+    is_sustainable: Mapped[bool] = mapped_column(db.Boolean, default=False)
+    sustainability_certifications = db.Column(db.JSON, default=list, nullable=False)
     expiration_date: Mapped[datetime] = mapped_column(
         db.DateTime(timezone=True), nullable=False
     )
@@ -114,4 +116,6 @@ class Product(db.Model):
                 "name": f"{self.user.first_name} {self.user.last_name}",
                 "is_verified": self.user.is_verified,
             },
+            "is_sustainable": self.is_sustainable,
+            "sustainability_certifications": self.sustainability_certifications,
         }

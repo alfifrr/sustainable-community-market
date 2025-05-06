@@ -1,7 +1,13 @@
 from app.utils.validators.base import BaseForm
-from wtforms import StringField, IntegerField
-from wtforms.validators import DataRequired, Length, NumberRange, ValidationError
-from app.models import Category, Address
+from wtforms import StringField, IntegerField, BooleanField, FieldList
+from wtforms.validators import (
+    DataRequired,
+    Length,
+    NumberRange,
+    ValidationError,
+    Optional,
+)
+from app.models import Category, Address, SustainabilityCertification
 from wtforms.fields import DateTimeField
 from datetime import datetime, timezone
 from flask_jwt_extended import get_jwt_identity
@@ -59,6 +65,10 @@ class ProductForm(BaseForm):
         ],
         format="%Y-%m-%dT%H:%M:%S.%fZ",
     )  # ISO 8601 format with milliseconds
+    is_sustainable = BooleanField("Is Sustainable", default=False)
+    sustainability_certifications = FieldList(
+        IntegerField("Certification ID"), validators=[Optional()]
+    )
 
     def validate_category_id(self, field):
         category = Category.query.get(field.data)
@@ -78,3 +88,12 @@ class ProductForm(BaseForm):
         current_time = datetime.now(timezone.utc)
         if expiration_date <= current_time:
             raise ValidationError("Expiration date must be in the future")
+
+    def validate_sustainability_certifications(self, field):
+        if field.data and len(field.data) > 0:
+            for cert_id in field.data:
+                cert = SustainabilityCertification.query.get(cert_id)
+                if not cert:
+                    raise ValidationError(
+                        f"Certification with ID {cert_id} does not exist"
+                    )

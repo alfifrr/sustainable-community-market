@@ -1,4 +1,4 @@
-from app.models import Category, Role, RoleType
+from app.models import Category, Role, RoleType, SustainabilityCertification
 from app import db
 
 
@@ -84,3 +84,53 @@ def seed_roles():
     except Exception as e:
         db.session.rollback()
         print(f"Error seeding roles: {str(e)}")
+
+
+def seed_sustainability_certifications():
+    default_certifications = [
+        {
+            "name": "Organic Certified",
+            "description": "Products that are grown and processed using organic farming methods without synthetic pesticides or fertilizers",
+            "icon": "eco_leaf",
+        },
+        {
+            "name": "Fair Trade",
+            "description": "Products that meet international social, environmental and economic standards, ensuring fair compensation to producers",
+            "icon": "fair_trade",
+        },
+        {
+            "name": "Zero Waste",
+            "description": "Products with minimal packaging waste and environmentally conscious production processes",
+            "icon": "recycling",
+        },
+        {
+            "name": "Local Producer",
+            "description": "Products sourced from local farmers and producers within 100km radius",
+            "icon": "local_farm",
+        },
+        {
+            "name": "Sustainable Packaging",
+            "description": "Products using biodegradable, recyclable, or minimal packaging materials",
+            "icon": "eco_package",
+        },
+        {
+            "name": "Carbon Neutral",
+            "description": "Products from manufacturers who offset their carbon emissions through verified programs",
+            "icon": "co2_neutral",
+        },
+    ]
+
+    for cert in default_certifications:
+        exists = SustainabilityCertification.query.filter_by(name=cert["name"]).first()
+        if not exists:
+            new_cert = SustainabilityCertification(
+                name=cert["name"], description=cert["description"], icon=cert["icon"]
+            )
+            db.session.add(new_cert)
+
+    try:
+        db.session.commit()
+        print("Sustainability certifications seeded successfully")
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error seeding sustainability certifications: {str(e)}")
