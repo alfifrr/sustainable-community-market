@@ -2,8 +2,7 @@ from secrets import token_urlsafe
 from app import bcrypt, db
 from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime, timezone
-from typing import List
-from .role import RoleType
+from .role import RoleType, Role
 
 
 class User(db.Model):
@@ -85,6 +84,20 @@ class User(db.Model):
 
     def is_expedition(self) -> bool:
         return self.has_role(RoleType.EXPEDITION)
+
+    @classmethod
+    def get_expeditions(cls, query: str = None):
+        """Get all expedition users with optional name search"""
+        base_query = cls.query.join(Role).filter(Role.name == RoleType.EXPEDITION)
+
+        if query:
+            return base_query.filter(
+                db.or_(
+                    db.func.lower(cls.first_name).like(f"%{query.lower()}%"),
+                    db.func.lower(cls.last_name).like(f"%{query.lower()}%"),
+                )
+            ).all()
+        return base_query.all()
 
     def __repr__(self):
         return f"<User {self.username}"

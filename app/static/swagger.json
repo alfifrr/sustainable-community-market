@@ -827,12 +827,17 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["transaction_id"],
+                "required": ["transaction_id", "expedition_id"],
                 "properties": {
                   "transaction_id": {
                     "type": "integer",
                     "example": 5,
                     "description": "ID of the transaction to process"
+                  },
+                  "expedition_id": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "ID of the expedition user to assign for delivery"
                   }
                 }
               }
@@ -869,6 +874,17 @@
                             "cancelled",
                             "delivered"
                           ]
+                        },
+                        "assigned_expedition": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          }
                         }
                       }
                     }
@@ -882,6 +898,9 @@
           },
           "401": {
             "description": "Unauthorized - Invalid or missing token"
+          },
+          "403": {
+            "description": "Forbidden - User must be seller"
           },
           "404": {
             "description": "Transaction not found"
@@ -960,31 +979,6 @@
           },
           "500": {
             "description": "Server error"
-          }
-        }
-      }
-    },
-    "/api/confirm-delivery": {
-      "post": {
-        "tags": ["Buyer"],
-        "summary": "Confirm product delivery",
-        "security": [{ "bearerAuth": [] }],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "transaction_id": { "type": "integer" }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Delivery confirmed successfully"
           }
         }
       }
@@ -1575,6 +1569,172 @@
           },
           "500": {
             "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/expeditions": {
+      "get": {
+        "tags": ["Expedition"],
+        "summary": "Get expedition users",
+        "description": "Retrieve all expedition users or search by name",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search query for expedition name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved expedition users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Expedition users retrieved successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "John Doe"
+                          },
+                          "date_joined": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "last_activity": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "is_verified": {
+                            "type": "boolean"
+                          },
+                          "role": {
+                            "type": "string",
+                            "enum": ["expedition"]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          },
+          "403": {
+            "description": "Forbidden - Only admin and sellers can view expedition list"
+          }
+        }
+      }
+    },
+
+    "/api/confirm-delivery": {
+      "post": {
+        "tags": ["Expedition"],
+        "summary": "Confirm delivery",
+        "description": "Confirm delivery of processed product by expedition user",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["transaction_id"],
+                "properties": {
+                  "transaction_id": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "ID of the processed transaction"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Delivery confirmed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Delivery confirmed successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "transaction": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "delivery_status": {
+                              "type": "string",
+                              "enum": ["delivered"]
+                            },
+                            "confirmation_date": {
+                              "type": "string",
+                              "format": "date-time"
+                            }
+                          }
+                        },
+                        "buyer_history": {
+                          "type": "object"
+                        },
+                        "seller_history": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or transaction not in processed state"
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          },
+          "403": {
+            "description": "Forbidden - User must be admin or assigned expedition"
+          },
+          "404": {
+            "description": "Transaction not found"
           }
         }
       }

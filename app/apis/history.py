@@ -17,6 +17,7 @@ def get_item_history():
             db.or_(
                 ItemTransaction.buyer_id == current_user_id,
                 ItemTransaction.seller_id == current_user_id,
+                ItemTransaction.assigned_expedition_id == current_user_id,
             )
         )
         .order_by(ItemTransaction.updated_at.desc())
@@ -53,6 +54,7 @@ def get_item_history_by_id(transaction_id):
             db.or_(
                 ItemTransaction.buyer_id == current_user_id,
                 ItemTransaction.seller_id == current_user_id,
+                ItemTransaction.assigned_expedition_id == current_user_id,
             ),
         )
     ).first()

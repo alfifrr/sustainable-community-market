@@ -16,6 +16,15 @@ class ProcessForm(BaseForm):
         "Transaction ID",
         validators=[DataRequired(message="Transaction ID is required")],
     )
+    expedition_id = IntegerField(
+        "Expedition ID",
+        validators=[DataRequired(message="Expedition ID is required")],
+    )
+
+    def validate_expedition_id(self, field):
+        expedition = User.query.get(field.data)
+        if not expedition or not expedition.is_expedition():
+            raise ValidationError("Invalid expedition user")
 
     def validate_transaction_id(self, field):
         current_user_id = get_jwt_identity()
@@ -56,8 +65,12 @@ class ConfirmDeliveryForm(BaseForm):
         current_user = User.query.get(current_user_id)
 
         # Admin and expedition can confirm any delivery
-        if current_user.is_admin() or current_user.is_expedition():
-            transaction = ItemTransaction.query.filter_by(id=field.data).first()
+        if current_user.is_admin():
+            transaction = ItemTransaction.query.get(field.data)
+        elif current_user.is_expedition():
+            transaction = ItemTransaction.query.filter_by(
+                id=field.data, assigned_expedition_id=current_user_id
+            ).first()
         else:
             # Buyers can only confirm their own transactions
             transaction = ItemTransaction.query.filter_by(

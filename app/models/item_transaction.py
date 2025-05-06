@@ -43,7 +43,8 @@ class ItemTransaction(db.Model):
     review_date: Mapped[datetime] = mapped_column(
         db.DateTime, nullable=True, comment="Timestamp when review was submitted"
     )
-    confirmed_by_id: Mapped[int] = mapped_column(
+
+    assigned_expedition_id: Mapped[int] = mapped_column(
         db.Integer,
         db.ForeignKey("users.id"),
         nullable=True,
@@ -86,7 +87,7 @@ class ItemTransaction(db.Model):
     )
     confirmed_by = db.relationship(
         "User",
-        foreign_keys=[confirmed_by_id],
+        foreign_keys=[assigned_expedition_id],
         backref=db.backref("confirmed_deliveries", lazy="dynamic"),
     )
 
@@ -134,8 +135,8 @@ class ItemTransaction(db.Model):
                 if self.buyer
                 else None
             ),
-            "confirmation_details": {
-                "confirmed_by": (
+            "assignment_details": {
+                "assigned_expedition": (
                     {
                         "id": self.confirmed_by.id,
                         "name": f"{self.confirmed_by.first_name} {self.confirmed_by.last_name}",

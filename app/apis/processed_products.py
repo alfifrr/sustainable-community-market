@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
-from flask_jwt_extended import jwt_required
-from app.models import ItemTransaction, StatusType
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.models import ItemTransaction, StatusType, User
 from app.utils.decorators import role_required, handle_request
 
 processed_products = Blueprint("processed_products", __name__, url_prefix="/api")
@@ -12,9 +12,17 @@ processed_products = Blueprint("processed_products", __name__, url_prefix="/api"
 @role_required(["admin", "expedition"])
 def get_processed_products():
     try:
-        transactions = ItemTransaction.query.filter_by(
-            delivery_status=StatusType.PROCESSED
-        ).all()
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        if user.is_admin():
+            transactions = ItemTransaction.query.filter_by(
+                delivery_status=StatusType.PROCESSED
+            ).all()
+        else:
+            transactions = ItemTransaction.query.filter_by(
+                delivery_status=StatusType.PROCESSED,
+                assigned_expedition_id=current_user_id,
+            ).all()
 
         if not transactions:
             return (
@@ -52,9 +60,19 @@ def get_processed_products():
 @role_required(["admin", "expedition"])
 def get_processed_product(id):
     try:
-        transaction = ItemTransaction.query.filter_by(
-            id=id, delivery_status=StatusType.PROCESSED
-        ).first()
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        if user.is_admin():
+            transaction = ItemTransaction.query.filter_by(
+                id=id,
+                delivery_status=StatusType.PROCESSED,
+            ).first()
+        else:
+            transaction = ItemTransaction.query.filter_by(
+                id=id,
+                delivery_status=StatusType.PROCESSED,
+                assigned_expedition_id=current_user_id,
+            ).first()
 
         if not transaction:
             return (

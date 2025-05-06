@@ -23,6 +23,12 @@
   <body>
     <h2>Welcome to Sustainable Community Market!</h2>
     <p>Hello {{ user.first_name }},</p>
+    <p>You are now trying to activate your account as,</p>
+    <p style="margin-left: 20px">
+      Username: {{ user.username }}<br />
+      Email: {{ user.email }}<br />
+      Phone number: {{ user.phone_number }}
+    </p>
     <p>
       Thank you for registering. Please click the button below to activate your
       account:
