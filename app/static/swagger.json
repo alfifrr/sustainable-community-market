@@ -1867,6 +1867,36 @@
             "description": "ID of the product certification to verify"
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": ["approved", "rejected"],
+                    "description": "Verification status for the certification"
+                  }
+                },
+                "required": ["status"]
+              },
+              "examples": {
+                "approve": {
+                  "value": {
+                    "status": "approved"
+                  }
+                },
+                "reject": {
+                  "value": {
+                    "status": "rejected"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successfully verified certification",

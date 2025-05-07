@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from app.models import SustainabilityCertification, ProductCertification, User
+from app.utils.validators import CertificationVerifyForm
 from app.utils.decorators import handle_request, role_required
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime, timezone
@@ -87,13 +88,19 @@ def verify_certification(certification_id):
             404,
         )
 
+    data = request.get_json()
+    form = CertificationVerifyForm(data=data)
+
+    if not form.validate():
+        return jsonify(form.get_validation_error()), 400
+
     try:
-        certification.status = "approved"
+        certification.status = data["status"].lower()
         certification.verification_date = datetime.now(timezone.utc)
         certification.verified_by = get_jwt_identity()
 
         # Update the product's sustainable status
-        if certification.product:
+        if certification.product and certification.status == "approved":
             certification.product.is_sustainable = True
 
         db.session.commit()

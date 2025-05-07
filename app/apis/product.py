@@ -25,8 +25,6 @@ def manage_products():
             sustainability_certifications = data.get(
                 "sustainability_certifications", []
             )
-            # Automatically determine is_sustainable based on certifications
-            is_sustainable = len(sustainability_certifications) > 0
 
             new_product = Product(
                 name=data["name"],
@@ -39,7 +37,6 @@ def manage_products():
                 expiration_date=datetime.fromisoformat(
                     data["expiration_date"].replace("Z", "+00:00")
                 ),
-                is_sustainable=is_sustainable,
                 sustainability_certifications=sustainability_certifications,
             )
             user = User.query.get(get_jwt_identity())
