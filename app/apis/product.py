@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.models import Product, User, Category
+from app.models import Product, User, Category, ProductCertification
 from app import db
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.utils.decorators import handle_request, role_required
@@ -22,6 +22,12 @@ def manage_products():
             return jsonify(form.get_validation_error()), 400
 
         try:
+            sustainability_certifications = data.get(
+                "sustainability_certifications", []
+            )
+            # Automatically determine is_sustainable based on certifications
+            is_sustainable = len(sustainability_certifications) > 0
+
             new_product = Product(
                 name=data["name"],
                 description=data["description"],
@@ -33,15 +39,23 @@ def manage_products():
                 expiration_date=datetime.fromisoformat(
                     data["expiration_date"].replace("Z", "+00:00")
                 ),
-                is_sustainable=data.get("is_sustainable", False),
-                sustainability_certifications=data.get(
-                    "sustainability_certifications", []
-                ),
+                is_sustainable=is_sustainable,
+                sustainability_certifications=sustainability_certifications,
             )
             user = User.query.get(get_jwt_identity())
             user.last_activity = datetime.now(timezone.utc)
 
             db.session.add(new_product)
+            db.session.flush()  # This ensures new_product gets its ID
+
+            # Create certification entries if sustainability_certifications array is not empty
+            if sustainability_certifications:
+                for cert_id in sustainability_certifications:
+                    cert_entry = ProductCertification(
+                        product_id=new_product.id, certification_id=cert_id
+                    )
+                    db.session.add(cert_entry)
+
             db.session.commit()
             return (
                 jsonify(

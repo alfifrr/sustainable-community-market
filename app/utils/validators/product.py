@@ -1,5 +1,5 @@
 from app.utils.validators.base import BaseForm
-from wtforms import StringField, IntegerField, BooleanField, FieldList
+from wtforms import StringField, IntegerField, FieldList
 from wtforms.validators import (
     DataRequired,
     Length,
@@ -65,7 +65,6 @@ class ProductForm(BaseForm):
         ],
         format="%Y-%m-%dT%H:%M:%S.%fZ",
     )  # ISO 8601 format with milliseconds
-    is_sustainable = BooleanField("Is Sustainable", default=False)
     sustainability_certifications = FieldList(
         IntegerField("Certification ID"), validators=[Optional()]
     )
