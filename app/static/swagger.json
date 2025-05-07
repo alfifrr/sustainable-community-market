@@ -71,8 +71,25 @@
           "stock": { "type": "integer" },
           "category_id": { "type": "integer" },
           "address_id": { "type": "integer" },
-          "expiration_date": { "type": "string", "format": "date-time" }
-        }
+          "expiration_date": { "type": "string", "format": "date-time" },
+          "sustainability_certifications": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Array of certification IDs. Empty array means non-sustainable product.",
+            "example": [1, 3]
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "price",
+          "stock",
+          "category_id",
+          "address_id",
+          "expiration_date"
+        ]
       },
       "SustainabilityCertification": {
         "type": "object",
