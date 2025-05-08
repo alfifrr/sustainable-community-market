@@ -104,6 +104,10 @@ class Product(db.Model):
                 "address": self.pickup_address.address,
                 "contact_person": self.pickup_address.contact_person,
                 "details": self.pickup_address.details,
+                "coordinates": {
+                    "latitude": self.pickup_address.latitude,
+                    "longitude": self.pickup_address.longitude,
+                },
             },
             "expiration_date": self.expiration_date.isoformat(),
             "product_posted": self.product_posted.isoformat(),
