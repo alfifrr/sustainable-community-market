@@ -7,16 +7,16 @@
   },
   "servers": [
     {
-      "url": "https://sustainable-community-market-test.onrender.com",
-      "description": "Test server"
-    },
-    {
       "url": "https://sustainable-community-market.onrender.com",
       "description": "Production server"
     },
     {
       "url": "http://localhost:5000",
       "description": "Local development server"
+    },
+    {
+      "url": "https://sustainable-community-market-test.onrender.com",
+      "description": "Test server"
     }
   ],
   "components": {
@@ -59,8 +59,11 @@
           "label": { "type": "string" },
           "address": { "type": "string" },
           "details": { "type": "string" },
-          "contact_person": { "type": "string" }
-        }
+          "contact_person": { "type": "string" },
+          "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+          "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+        },
+        "required": ["label", "address", "contact_person"]
       },
       "Product": {
         "type": "object",

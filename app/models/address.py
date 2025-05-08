@@ -12,6 +12,9 @@ class Address(db.Model):
     details: Mapped[str] = mapped_column(db.String(255), nullable=True)
     contact_person: Mapped[str] = mapped_column(db.String(255), nullable=False)
 
+    latitude = mapped_column(db.Float, nullable=True)
+    longitude = mapped_column(db.Float, nullable=True)
+
     date_created: Mapped[datetime] = mapped_column(db.DateTime(
         timezone=True), default=lambda: datetime.now(timezone.utc))
     date_updated: Mapped[datetime] = mapped_column(db.DateTime(
@@ -36,6 +39,10 @@ class Address(db.Model):
             "address": self.address,
             "details": self.details,
             "contact_person": self.contact_person,
+            "coordinates": {
+                "latitude": self.latitude,
+                "longitude": self.longitude
+            },
             "date_created": self.date_created.isoformat(),
             "date_updated": self.date_updated.isoformat() if self.date_updated else None,
             "user_id": self.user_id

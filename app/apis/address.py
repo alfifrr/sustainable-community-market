@@ -33,6 +33,8 @@ def manage_addresses():
                 address=data['address'],
                 details=data.get('details'),
                 contact_person=data['contact_person'],
+                latitude=data.get('latitude'),
+                longitude=data.get('longitude'),
                 user_id=current_user_id
             )
             user.last_activity = datetime.now(timezone.utc)

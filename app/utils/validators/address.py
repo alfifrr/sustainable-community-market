@@ -1,6 +1,6 @@
 from app.utils.validators.base import BaseForm
-from wtforms import StringField
-from wtforms.validators import DataRequired, Length
+from wtforms import StringField, FloatField
+from wtforms.validators import DataRequired, Length, NumberRange, Optional
 
 
 class AddressForm(BaseForm):
@@ -22,4 +22,14 @@ class AddressForm(BaseForm):
             max=255,
             message='Contact person must be between 3 and 255 characters'
         )
+    ])
+    latitude = FloatField('latitude', validators=[
+        Optional(),
+        NumberRange(min=-90, max=90,
+                    message='Latitude must be between -90 and 90 degrees')
+    ])
+    longitude = FloatField('longitude', validators=[
+        Optional(),
+        NumberRange(min=-180, max=180,
+                    message='Longitude must be between -180 and 180 degrees')
     ])
