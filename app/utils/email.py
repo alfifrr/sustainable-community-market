@@ -26,3 +26,15 @@ def send_activation_email(user, activation_url):
     If you did not create this account, please ignore this email.
     """
     mail.send(msg)
+
+
+def send_newsletter_email(email, explore_url, unsubscribe_url):
+    msg = Message(
+        subject="Sustainable Community Market Newsletter",
+        sender=current_app.config["MAIL_DEFAULT_SENDER"],
+        recipients=[email],
+    )
+    msg.html = render_template(
+        "email/newsletter.html", explore_url=explore_url, unsubscribe_url=unsubscribe_url
+    )
+    mail.send(msg)

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sustainable Community Market Newsletter</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+      }
+      .header {
+        text-align: center;
+        background-color: #438ce0;
+        color: white;
+        padding: 10px 0;
+        border-radius: 8px 8px 0 0;
+      }
+      .button {
+        background-color: #438ce0;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 10px 0;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      .footer {
+        text-align: center;
+        font-size: 12px;
+        color: #777;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Sustainable Community Market</h1>
+      </div>
+      <p>Dear Subscriber,</p>
+      <p>
+        Thank you for joining our newsletter! Stay updated with the latest
+        impact stories, sustainable living tips, and exclusive promotions.
+      </p>
+      <h2>What to Expect:</h2>
+      <ul>
+        <li>Monthly updates on our community impact</li>
+        <li>Tips for living a more sustainable lifestyle</li>
+        <li>Exclusive promotions and discounts</li>
+        <li>Opportunities to join as a volunteer</li>
+      </ul>
+      <p>
+        Together, we can make a difference. Click the button below to explore
+        more about our initiatives:
+      </p>
+      <p>
+        <a href="{{ explore_url }}" class="button">Explore More</a>
+      </p>
+      <p class="footer">
+        You are receiving this email because you subscribed to our newsletter.
+        If you wish to unsubscribe, click
+        <a href="{{ unsubscribe_url }}">here</a>.
+      </p>
+    </div>
+  </body>
+</html>

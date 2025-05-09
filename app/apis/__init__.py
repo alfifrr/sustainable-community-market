@@ -15,6 +15,7 @@ from .user_profile import profile
 from .processed_products import processed_products
 from .product_review import product_review
 from .certifications import certifications
+from .newsletter import newsletter_bp
 
 blueprints = [
     (user, "/api"),
@@ -37,4 +38,5 @@ blueprints = [
         certifications,
         "/api/sustainability",
     ),  # New endpoints under /api/sustainability prefix
+    (newsletter_bp, '/api')
 ]
